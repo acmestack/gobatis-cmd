@@ -16,12 +16,13 @@ type modelInfo struct {
     columnName string
     dataType   string
     nullable   string
+    columnKey  string
     comment    string
     tag        string
 }
 
 func generate(config config, db *db, dbName, tableName string) error {
-    sqlStr := `SELECT COLUMN_NAME,DATA_TYPE,IS_NULLABLE,COLUMN_COMMENT
+    sqlStr := `SELECT COLUMN_NAME,DATA_TYPE,IS_NULLABLE,COLUMN_KEY,COLUMN_COMMENT
 		FROM COLUMNS 
 		WHERE table_schema = ? AND TABLE_NAME = ?`
     row, err := (*sql.DB)(db).Query(sqlStr, dbName, tableName)
@@ -33,7 +34,7 @@ func generate(config config, db *db, dbName, tableName string) error {
     var models []modelInfo
     var info modelInfo
     for row.Next() {
-        err := row.Scan(&info.columnName, &info.dataType, &info.nullable, &info.comment)
+        err := row.Scan(&info.columnName, &info.dataType, &info.nullable, &info.columnKey, &info.comment)
         if err != nil {
             continue
         }
@@ -67,4 +68,3 @@ func generateAll(config config, db *db, dbName string) error {
     }
     return nil
 }
-

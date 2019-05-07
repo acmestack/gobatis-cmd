@@ -33,7 +33,7 @@ func main() {
     username := flag.String("user", "", "user name of db")
     pw := flag.String("pw", "", "password of db")
     path := flag.String("path", "", "root path to save files")
-    modelfile := flag.String("model", "models.go", "the name of model file")
+    modelfile := flag.String("model", "", "the name of model file")
     tagName := flag.String("tag", "xfield", "the name of field tag")
     flag.Parse()
 

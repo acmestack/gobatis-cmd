@@ -58,7 +58,7 @@ func genXml(config config, tableName string, model []modelInfo) {
             builder.WriteString(columnSpace())
             builder.WriteString(columnSpace())
             builder.WriteString(columnSpace())
-            builder.WriteString(fmt.Sprintf("<if test=\"%s != nil\">AND %s = #{%s} </if>", fieldName, f.columnName, fieldName))
+            builder.WriteString(fmt.Sprintf("<if test=\"%s != %s\">AND %s = #{%s} </if>", fieldName, sqlType2IfValueMap[f.dataType], f.columnName, fieldName))
             builder.WriteString(newline())
         }
         builder.WriteString(columnSpace())
@@ -120,13 +120,22 @@ func genXml(config config, tableName string, model []modelInfo) {
             builder.WriteString(columnSpace())
             builder.WriteString(columnSpace())
             builder.WriteString(columnSpace())
-            builder.WriteString(fmt.Sprintf("<if test=\"%s != nil\"> %s = #{%s} </if>", fieldName, f.columnName, fieldName))
+            builder.WriteString(fmt.Sprintf("<if test=\"%s != %s\"> %s = #{%s} </if>", fieldName, sqlType2IfValueMap[f.dataType], f.columnName, fieldName))
             builder.WriteString(newline())
         }
         builder.WriteString(columnSpace())
         builder.WriteString(columnSpace())
         builder.WriteString("</set>")
         builder.WriteString(newline())
+        for _, f := range model {
+            if strings.ToUpper(f.columnKey) == "PRI" {
+                builder.WriteString(columnSpace())
+                builder.WriteString(columnSpace())
+                builder.WriteString(fmt.Sprintf("WHERE %s = #{%s}", f.columnName, f.columnName))
+                builder.WriteString(newline())
+                break
+            }
+        }
         builder.WriteString(columnSpace())
         builder.WriteString("</update>")
         builder.WriteString(newline())
@@ -150,7 +159,7 @@ func genXml(config config, tableName string, model []modelInfo) {
             builder.WriteString(columnSpace())
             builder.WriteString(columnSpace())
             builder.WriteString(columnSpace())
-            builder.WriteString(fmt.Sprintf("<if test=\"%s != nil\">AND %s = #{%s} </if>", fieldName, f.columnName, fieldName))
+            builder.WriteString(fmt.Sprintf("<if test=\"%s != %s\">AND %s = #{%s} </if>", fieldName, sqlType2IfValueMap[f.dataType], f.columnName, fieldName))
             builder.WriteString(newline())
         }
         builder.WriteString(columnSpace())

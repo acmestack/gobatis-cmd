@@ -18,6 +18,7 @@ func createModeInfo() *[]modelInfo{
         nullable:   "NO",
         comment:    "id",
         tag  :      "id",
+        columnKey: "PRI",
     }
     model = append(model, info)
 
@@ -66,7 +67,6 @@ func TestXml(t *testing.T) {
         packageName: "test_package",
         path:        "c:/tmp/",
         tagName:     "xfield",
-        modelFile:   "model.go",
     }
 
     genXml(config, "test_table", *createModeInfo())
@@ -77,7 +77,6 @@ func TestProxy(t *testing.T) {
         packageName: "test_package",
         path:        "c:/tmp/",
         tagName:     "xfield",
-        modelFile:   "model.go",
     }
 
     genProxy(config, "test_table", *createModeInfo())
@@ -88,7 +87,7 @@ func TestAll(t *testing.T) {
         packageName: "test_package",
         path:        "c:/tmp/",
         tagName:     "xfield",
-        modelFile:   "model.go",
+        //modelFile:   "model.go",
     }
     info := *createModeInfo()
     genModel(config, "test_table", info)

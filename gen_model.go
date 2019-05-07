@@ -28,8 +28,12 @@ func genModel(config config, tableName string, model []modelInfo) {
     if !io.IsPathExists(modelDir) {
         io.Mkdir(modelDir)
     }
-    exist := io.IsPathExists(modelDir + config.modelFile)
-    modelFile, err := io.OpenAppend(modelDir + config.modelFile)
+    fileName := config.modelFile
+    if fileName == "" {
+        fileName = tableName + ".go"
+    }
+    exist := io.IsPathExists(modelDir + fileName)
+    modelFile, err := io.OpenAppend(modelDir + fileName)
     if err == nil {
         defer modelFile.Close()
 

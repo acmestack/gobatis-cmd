@@ -145,7 +145,7 @@ type TestTableCallProxy runner.RunnerSession
 func init() {
     modelV := TestTable{}
     config.RegisterModel(&modelV)
-    config.RegisterMapperFile("e:/tmp/xml/test_table.xml")
+    config.RegisterMapperFile("${PATH}/test_table.xml")
 }
 
 func New(proxyMrg *runner.SessionManager) *TestTableCallProxy {
@@ -216,7 +216,7 @@ fmt.Println(ret)
 
 //事务
 proxy.Tx(func(s *TestTableCallProxy) bool {
-    .UpdateTestTable(TestTable{Id: 1, Username:"user"})
+    s.UpdateTestTable(TestTable{Id: 1, Username:"user"})
     return true
 })
 

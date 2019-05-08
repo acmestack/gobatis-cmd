@@ -58,7 +58,7 @@ func genXml(config config, tableName string, model []modelInfo) {
             builder.WriteString(columnSpace())
             builder.WriteString(columnSpace())
             builder.WriteString(columnSpace())
-            builder.WriteString(fmt.Sprintf("<if test=\"%s != %s\">AND %s = #{%s} </if>", fieldName, sqlType2IfValueMap[f.dataType], f.columnName, fieldName))
+            builder.WriteString(fmt.Sprintf("<if test=\"%s\">AND %s = #{%s} </if>", getIfStr(f.dataType, fieldName), f.columnName, fieldName))
             builder.WriteString(newline())
         }
         builder.WriteString(columnSpace())
@@ -120,7 +120,7 @@ func genXml(config config, tableName string, model []modelInfo) {
             builder.WriteString(columnSpace())
             builder.WriteString(columnSpace())
             builder.WriteString(columnSpace())
-            builder.WriteString(fmt.Sprintf("<if test=\"%s != %s\"> %s = #{%s} </if>", fieldName, sqlType2IfValueMap[f.dataType], f.columnName, fieldName))
+            builder.WriteString(fmt.Sprintf("<if test=\"%s\"> %s = #{%s} </if>", getIfStr(f.dataType, fieldName), f.columnName, fieldName))
             builder.WriteString(newline())
         }
         builder.WriteString(columnSpace())
@@ -159,7 +159,7 @@ func genXml(config config, tableName string, model []modelInfo) {
             builder.WriteString(columnSpace())
             builder.WriteString(columnSpace())
             builder.WriteString(columnSpace())
-            builder.WriteString(fmt.Sprintf("<if test=\"%s != %s\">AND %s = #{%s} </if>", fieldName, sqlType2IfValueMap[f.dataType], f.columnName, fieldName))
+            builder.WriteString(fmt.Sprintf("<if test=\"%s\">AND %s = #{%s} </if>", getIfStr(f.dataType, fieldName), f.columnName, fieldName))
             builder.WriteString(newline())
         }
         builder.WriteString(columnSpace())
@@ -174,4 +174,8 @@ func genXml(config config, tableName string, model []modelInfo) {
         builder.WriteString("</mapper>")
         io.Write(xmlFile, []byte(builder.String()))
     }
+}
+
+func getIfStr(ctype, name string) string {
+    return strings.Replace(sqlType2IfFormatMap[ctype], "%s", name, -1)
 }

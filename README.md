@@ -80,7 +80,7 @@ type TestTable struct {
     <select id="selectTestTable">
         SELECT <include refid="columns_id"> </include> FROM test_table
         <where>
-            <if test="id != -1">AND id = #{id} </if>
+            <if test="id != nil and id != 0">AND id = #{id} </if>
             <if test="username != nil">AND username = #{username} </if>
             <if test="password != nil">AND password = #{password} </if>
             <if test="update_time != nil">AND update_time = #{update_time} </if>
@@ -100,7 +100,7 @@ type TestTable struct {
     <update id="updateTestTable">
         UPDATE test_table
         <set>
-            <if test="id != -1"> id = #{id} </if>
+            <if test="id != nil and id != 0"> id = #{id} </if>
             <if test="username != nil"> username = #{username} </if>
             <if test="password != nil"> password = #{password} </if>
             <if test="update_time != nil"> update_time = #{update_time} </if>
@@ -111,7 +111,7 @@ type TestTable struct {
     <delete id="deleteTestTable">
         DELETE FROM test_table
         <where>
-            <if test="id != -1">AND id = #{id} </if>
+            <if test="id != nil and id != 0">AND id = #{id} </if>
             <if test="username != nil">AND username = #{username} </if>
             <if test="password != nil">AND password = #{password} </if>
             <if test="update_time != nil">AND update_time = #{update_time} </if>
@@ -121,6 +121,8 @@ type TestTable struct {
 ```
 
 ### 3、代理
+
+文件为： ${PATH}/${表名}_proxy.go
 
 自动根据model和xml生成代理方法，包含：
 

@@ -33,20 +33,23 @@ func genProxy(config config, tableName string, models []modelInfo) {
         builder.WriteString("import (")
         builder.WriteString(newline())
         builder.WriteString(columnSpace())
-        builder.WriteString(`"github.com/xfali/gobatis/config"`)
+        builder.WriteString(`"context"`)
+        builder.WriteString(newline())
+        builder.WriteString(columnSpace())
+        builder.WriteString(`"github.com/xfali/gobatis"`)
         builder.WriteString(newline())
         //builder.WriteString(columnSpace())
         //builder.WriteString(`"github.com/xfali/gobatis/factory"`)
         //builder.WriteString(newline())
-        builder.WriteString(columnSpace())
-        builder.WriteString(`"github.com/xfali/gobatis/session/runner"`)
-        builder.WriteString(newline())
+        //builder.WriteString(columnSpace())
+        //builder.WriteString(`"github.com/xfali/gobatis/session/runner"`)
+        //builder.WriteString(newline())
         builder.WriteString(")")
         builder.WriteString(newline())
         builder.WriteString(newline())
 
         proxyName := fmt.Sprintf("%sCallProxy", modelName)
-        builder.WriteString(fmt.Sprintf("type %s runner.RunnerSession", proxyName))
+        builder.WriteString(fmt.Sprintf("type %s gobatis.Session", proxyName))
         builder.WriteString(newline())
         builder.WriteString(newline())
 
@@ -58,18 +61,18 @@ func genProxy(config config, tableName string, models []modelInfo) {
         builder.WriteString(newline())
 
         builder.WriteString(columnSpace())
-        builder.WriteString("config.RegisterModel(&modelV)")
+        builder.WriteString("gobatis.RegisterModel(&modelV)")
         builder.WriteString(newline())
 
         builder.WriteString(columnSpace())
-        builder.WriteString(fmt.Sprintf("config.RegisterMapperFile(\"%sxml/%s.xml\")", config.path,tableName))
+        builder.WriteString(fmt.Sprintf("gobatis.RegisterMapperFile(\"%sxml/%s.xml\")", config.path, tableName))
         builder.WriteString(newline())
 
         builder.WriteString("}")
         builder.WriteString(newline())
         builder.WriteString(newline())
 
-        builder.WriteString(fmt.Sprintf("func New(proxyMrg *runner.SessionManager) *%s {", proxyName))
+        builder.WriteString(fmt.Sprintf("func New(proxyMrg *gobatis.SessionManager) *%s {", proxyName))
         builder.WriteString(newline())
 
         builder.WriteString(columnSpace())
@@ -85,11 +88,11 @@ func genProxy(config config, tableName string, models []modelInfo) {
         builder.WriteString(newline())
 
         builder.WriteString(columnSpace())
-        builder.WriteString(`sess := (*runner.RunnerSession)(proxy)`)
+        builder.WriteString(`sess := (*gobatis.Session)(proxy)`)
         builder.WriteString(newline())
 
         builder.WriteString(columnSpace())
-        builder.WriteString(`sess.Tx(func(session *runner.RunnerSession) bool {`)
+        builder.WriteString(`sess.Tx(func(session *gobatis.Session) bool {`)
         builder.WriteString(newline())
 
         builder.WriteString(columnSpace())
@@ -115,7 +118,7 @@ func genProxy(config config, tableName string, models []modelInfo) {
         builder.WriteString(newline())
 
         builder.WriteString(columnSpace())
-        builder.WriteString(fmt.Sprintf(`(*runner.RunnerSession)(proxy).Select("select%s").Param(model).Result(&dataList)`, modelName))
+        builder.WriteString(fmt.Sprintf(`(*gobatis.Session)(proxy).Select("select%s").Context(context.Background()).Param(model).Result(&dataList)`, modelName))
         builder.WriteString(newline())
 
         builder.WriteString(columnSpace())
@@ -127,8 +130,8 @@ func genProxy(config config, tableName string, models []modelInfo) {
         builder.WriteString(newline())
         //select end
 
-        //insert
-        builder.WriteString(fmt.Sprintf("func (proxy *%s)Insert%s(model %s) int64 {", proxyName, modelName, modelName))
+        //select count
+        builder.WriteString(fmt.Sprintf("func (proxy *%s)Select%sCount(model %s) int64 {", proxyName, modelName, modelName))
         builder.WriteString(newline())
 
         builder.WriteString(columnSpace())
@@ -136,11 +139,40 @@ func genProxy(config config, tableName string, models []modelInfo) {
         builder.WriteString(newline())
 
         builder.WriteString(columnSpace())
-        builder.WriteString(fmt.Sprintf(`(*runner.RunnerSession)(proxy).Insert("insert%s").Param(model).Result(&ret)`, modelName))
+        builder.WriteString(fmt.Sprintf(`(*gobatis.Session)(proxy).Select("select%sCount").Context(context.Background()).Param(model).Result(&ret)`, modelName))
         builder.WriteString(newline())
 
         builder.WriteString(columnSpace())
         builder.WriteString("return ret")
+        builder.WriteString(newline())
+
+        builder.WriteString("}")
+        builder.WriteString(newline())
+        builder.WriteString(newline())
+        //select count end
+
+        //insert
+        builder.WriteString(fmt.Sprintf("func (proxy *%s)Insert%s(model %s) (int64, int64) {", proxyName, modelName, modelName))
+        builder.WriteString(newline())
+
+        builder.WriteString(columnSpace())
+        builder.WriteString("var ret int64")
+        builder.WriteString(newline())
+
+        builder.WriteString(columnSpace())
+        builder.WriteString(fmt.Sprintf(`runner := (*gobatis.Session)(proxy).Insert("insert%s").Context(context.Background()).Param(model)`, modelName))
+        builder.WriteString(newline())
+
+        builder.WriteString(columnSpace())
+        builder.WriteString(`runner.Result(&ret)`)
+        builder.WriteString(newline())
+
+        builder.WriteString(columnSpace())
+        builder.WriteString(`id := runner.LastInsertId()`)
+        builder.WriteString(newline())
+
+        builder.WriteString(columnSpace())
+        builder.WriteString("return ret, id")
         builder.WriteString(newline())
 
         builder.WriteString("}")
@@ -157,7 +189,7 @@ func genProxy(config config, tableName string, models []modelInfo) {
         builder.WriteString(newline())
 
         builder.WriteString(columnSpace())
-        builder.WriteString(fmt.Sprintf(`(*runner.RunnerSession)(proxy).Update("update%s").Param(model).Result(&ret)`, modelName))
+        builder.WriteString(fmt.Sprintf(`(*gobatis.Session)(proxy).Update("update%s").Context(context.Background()).Param(model).Result(&ret)`, modelName))
         builder.WriteString(newline())
 
         builder.WriteString(columnSpace())
@@ -178,7 +210,7 @@ func genProxy(config config, tableName string, models []modelInfo) {
         builder.WriteString(newline())
 
         builder.WriteString(columnSpace())
-        builder.WriteString(fmt.Sprintf(`(*runner.RunnerSession)(proxy).Delete("delete%s").Param(model).Result(&ret)`, modelName))
+        builder.WriteString(fmt.Sprintf(`(*gobatis.Session)(proxy).Delete("delete%s").Context(context.Background()).Param(model).Result(&ret)`, modelName))
         builder.WriteString(newline())
 
         builder.WriteString(columnSpace())

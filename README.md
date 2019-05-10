@@ -87,6 +87,16 @@ type TestTable struct {
         </where>
     </select>
 
+    <select id="selectTestTableCount">
+        SELECT COUNT(*) FROM test_table
+        <where>
+            <if test="id != nil and id != 0">AND id = #{id} </if>
+            <if test="username != nil">AND username = #{username} </if>
+            <if test="password != nil">AND password = #{password} </if>
+            <if test="update_time != nil">AND update_time = #{update_time} </if>
+        </where>
+    </select>
+
     <insert id="insertTestTable">
         INSERT INTO test_table (id,username,password,update_time)
         VALUES(
@@ -138,50 +148,58 @@ type TestTable struct {
 package test_package
 
 import (
-    "github.com/xfali/gobatis/config"
-    "github.com/xfali/gobatis/session/runner"
+    "context"
+    "github.com/xfali/gobatis"
 )
 
-type TestTableCallProxy runner.RunnerSession
+type TestTableCallProxy gobatis.Session
 
 func init() {
     modelV := TestTable{}
-    config.RegisterModel(&modelV)
-    config.RegisterMapperFile("${PATH}/test_table.xml")
+    gobatis.RegisterModel(&modelV)
+    gobatis.RegisterMapperFile("c:/tmp/xml/test_table.xml")
 }
 
-func New(proxyMrg *runner.SessionManager) *TestTableCallProxy {
+func New(proxyMrg *gobatis.SessionManager) *TestTableCallProxy {
     return (*TestTableCallProxy)(proxyMrg.NewSession())
 }
 
 func (proxy *TestTableCallProxy) Tx(txFunc func(s *TestTableCallProxy) bool) {
-    sess := (*runner.RunnerSession)(proxy)
-    sess.Tx(func(session *runner.RunnerSession) bool {
+    sess := (*gobatis.Session)(proxy)
+    sess.Tx(func(session *gobatis.Session) bool {
         return txFunc(proxy)
     })
 }
 
 func (proxy *TestTableCallProxy)SelectTestTable(model TestTable) []TestTable {
     var dataList []TestTable
-    (*runner.RunnerSession)(proxy).Select("selectTestTable").Param(model).Result(&dataList)
+    (*gobatis.Session)(proxy).Select("selectTestTable").Context(context.Background()).Param(model).Result(&dataList)
     return dataList
 }
 
-func (proxy *TestTableCallProxy)InsertTestTable(model TestTable) int64 {
+func (proxy *TestTableCallProxy)SelectTestTableCount(model TestTable) int64 {
     var ret int64
-    (*runner.RunnerSession)(proxy).Insert("insertTestTable").Param(model).Result(&ret)
+    (*gobatis.Session)(proxy).Select("selectTestTableCount").Context(context.Background()).Param(model).Result(&ret)
     return ret
+}
+
+func (proxy *TestTableCallProxy)InsertTestTable(model TestTable) (int64, int64) {
+    var ret int64
+    runner := (*gobatis.Session)(proxy).Insert("insertTestTable").Context(context.Background()).Param(model)
+    runner.Result(&ret)
+    id := runner.LastInsertId()
+    return ret, id
 }
 
 func (proxy *TestTableCallProxy)UpdateTestTable(model TestTable) int64 {
     var ret int64
-    (*runner.RunnerSession)(proxy).Update("updateTestTable").Param(model).Result(&ret)
+    (*gobatis.Session)(proxy).Update("updateTestTable").Context(context.Background()).Param(model).Result(&ret)
     return ret
 }
 
 func (proxy *TestTableCallProxy)DeleteTestTable(model TestTable) int64 {
     var ret int64
-    (*runner.RunnerSession)(proxy).Delete("deleteTestTable").Param(model).Result(&ret)
+    (*gobatis.Session)(proxy).Delete("deleteTestTable").Context(context.Background()).Param(model).Result(&ret)
     return ret
 }
 ```
@@ -209,10 +227,10 @@ fac := factory.DefaultFactory{
     Log: logging.DefaultLogf,
 }
 fac.Init()
-sessionMgr := runner.NewSessionManager(&fac)
+sessionMgr := gobatis.NewSessionManager(&fac)
 
 proxy := New(sessionMgr)
-ret := proxy.InsertTestTable(TestTable{Username:"test_user"})
+ret, insertId := proxy.InsertTestTable(TestTable{Username:"test_user"})
 
 fmt.Println(ret)
 

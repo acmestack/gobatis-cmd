@@ -71,6 +71,36 @@ func genXml(config config, tableName string, model []modelInfo) {
         builder.WriteString(newline())
         //select end
 
+        //select count
+        builder.WriteString(columnSpace())
+        builder.WriteString(fmt.Sprintf("<select id=\"select%sCount\">",modelName))
+        builder.WriteString(newline())
+        builder.WriteString(columnSpace())
+        builder.WriteString(columnSpace())
+        builder.WriteString(fmt.Sprintf("SELECT COUNT(*) FROM %s", tableName))
+        builder.WriteString(newline())
+        builder.WriteString(columnSpace())
+        builder.WriteString(columnSpace())
+        builder.WriteString("<where>")
+        builder.WriteString(newline())
+        for _, f := range model {
+            fieldName := f.columnName//column2Modelfield(f.columnName)
+            builder.WriteString(columnSpace())
+            builder.WriteString(columnSpace())
+            builder.WriteString(columnSpace())
+            builder.WriteString(fmt.Sprintf("<if test=\"%s\">AND %s = #{%s} </if>", getIfStr(f.dataType, fieldName), f.columnName, fieldName))
+            builder.WriteString(newline())
+        }
+        builder.WriteString(columnSpace())
+        builder.WriteString(columnSpace())
+        builder.WriteString("</where>")
+        builder.WriteString(newline())
+        builder.WriteString(columnSpace())
+        builder.WriteString("</select>")
+        builder.WriteString(newline())
+        builder.WriteString(newline())
+        //select count
+
         //insert
         builder.WriteString(columnSpace())
         builder.WriteString(fmt.Sprintf("<insert id=\"insert%s\">",modelName))

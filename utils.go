@@ -26,6 +26,10 @@ func column2Modelfield(column string) string {
     return snake2camel(column)
 }
 
+func column2DynamicName(tableName, column string) string {
+    return tableName + "." + column
+}
+
 // snake string, XxYy to xx_yy , XxYY to xx_yy
 func camel2snake(s string) string {
     data := make([]byte, 0, len(s)*2)

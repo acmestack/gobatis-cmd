@@ -32,7 +32,7 @@ func genXml(config config, tableName string, model []modelInfo) {
         columns := ""
         for i := range model {
             columns += model[i].columnName
-            if i < len(model) - 1 {
+            if i < len(model)-1 {
                 columns += ","
             }
         }
@@ -43,7 +43,7 @@ func genXml(config config, tableName string, model []modelInfo) {
 
         //select
         builder.WriteString(columnSpace())
-        builder.WriteString(fmt.Sprintf("<select id=\"select%s\">",modelName))
+        builder.WriteString(fmt.Sprintf("<select id=\"select%s\">", modelName))
         builder.WriteString(newline())
         builder.WriteString(columnSpace())
         builder.WriteString(columnSpace())
@@ -54,7 +54,7 @@ func genXml(config config, tableName string, model []modelInfo) {
         builder.WriteString("<where>")
         builder.WriteString(newline())
         for _, f := range model {
-            fieldName := f.columnName//column2Modelfield(f.columnName)
+            fieldName := column2DynamicName(modelName, f.columnName)
             builder.WriteString(columnSpace())
             builder.WriteString(columnSpace())
             builder.WriteString(columnSpace())
@@ -73,7 +73,7 @@ func genXml(config config, tableName string, model []modelInfo) {
 
         //select count
         builder.WriteString(columnSpace())
-        builder.WriteString(fmt.Sprintf("<select id=\"select%sCount\">",modelName))
+        builder.WriteString(fmt.Sprintf("<select id=\"select%sCount\">", modelName))
         builder.WriteString(newline())
         builder.WriteString(columnSpace())
         builder.WriteString(columnSpace())
@@ -84,7 +84,7 @@ func genXml(config config, tableName string, model []modelInfo) {
         builder.WriteString("<where>")
         builder.WriteString(newline())
         for _, f := range model {
-            fieldName := f.columnName//column2Modelfield(f.columnName)
+            fieldName := column2DynamicName(modelName, f.columnName)
             builder.WriteString(columnSpace())
             builder.WriteString(columnSpace())
             builder.WriteString(columnSpace())
@@ -103,7 +103,7 @@ func genXml(config config, tableName string, model []modelInfo) {
 
         //insert
         builder.WriteString(columnSpace())
-        builder.WriteString(fmt.Sprintf("<insert id=\"insert%s\">",modelName))
+        builder.WriteString(fmt.Sprintf("<insert id=\"insert%s\">", modelName))
         builder.WriteString(newline())
         builder.WriteString(columnSpace())
         builder.WriteString(columnSpace())
@@ -117,7 +117,7 @@ func genXml(config config, tableName string, model []modelInfo) {
             builder.WriteString(columnSpace())
             builder.WriteString(columnSpace())
             //builder.WriteString(fmt.Sprintf("#{%s}", column2Modelfield(model[i].columnName)))
-            builder.WriteString(fmt.Sprintf("#{%s}", model[i].columnName))
+            builder.WriteString(fmt.Sprintf("#{%s}", column2DynamicName(modelName, model[i].columnName)))
             if i < len(model)-1 {
                 builder.WriteString(",")
             }
@@ -135,7 +135,7 @@ func genXml(config config, tableName string, model []modelInfo) {
 
         //update
         builder.WriteString(columnSpace())
-        builder.WriteString(fmt.Sprintf("<update id=\"update%s\">",modelName))
+        builder.WriteString(fmt.Sprintf("<update id=\"update%s\">", modelName))
         builder.WriteString(newline())
         builder.WriteString(columnSpace())
         builder.WriteString(columnSpace())
@@ -145,8 +145,13 @@ func genXml(config config, tableName string, model []modelInfo) {
         builder.WriteString(columnSpace())
         builder.WriteString("<set>")
         builder.WriteString(newline())
-        for _, f := range model {
-            fieldName := f.columnName//column2Modelfield(f.columnName)
+        index := -1
+        for i, f := range model {
+            if strings.ToUpper(f.columnKey) == "PRI" {
+                index = i
+                continue
+            }
+            fieldName := column2DynamicName(modelName, f.columnName)
             builder.WriteString(columnSpace())
             builder.WriteString(columnSpace())
             builder.WriteString(columnSpace())
@@ -157,14 +162,12 @@ func genXml(config config, tableName string, model []modelInfo) {
         builder.WriteString(columnSpace())
         builder.WriteString("</set>")
         builder.WriteString(newline())
-        for _, f := range model {
-            if strings.ToUpper(f.columnKey) == "PRI" {
-                builder.WriteString(columnSpace())
-                builder.WriteString(columnSpace())
-                builder.WriteString(fmt.Sprintf("WHERE %s = #{%s}", f.columnName, f.columnName))
-                builder.WriteString(newline())
-                break
-            }
+        if index != -1 {
+            f := model[index]
+            builder.WriteString(columnSpace())
+            builder.WriteString(columnSpace())
+            builder.WriteString(fmt.Sprintf("WHERE %s = #{%s}", f.columnName, column2DynamicName(modelName, f.columnName)))
+            builder.WriteString(newline())
         }
         builder.WriteString(columnSpace())
         builder.WriteString("</update>")
@@ -174,18 +177,18 @@ func genXml(config config, tableName string, model []modelInfo) {
 
         //delete
         builder.WriteString(columnSpace())
-        builder.WriteString(fmt.Sprintf("<delete id=\"delete%s\">",modelName))
+        builder.WriteString(fmt.Sprintf("<delete id=\"delete%s\">", modelName))
         builder.WriteString(newline())
         builder.WriteString(columnSpace())
         builder.WriteString(columnSpace())
-        builder.WriteString(fmt.Sprintf("DELETE FROM %s",tableName))
+        builder.WriteString(fmt.Sprintf("DELETE FROM %s", tableName))
         builder.WriteString(newline())
         builder.WriteString(columnSpace())
         builder.WriteString(columnSpace())
         builder.WriteString("<where>")
         builder.WriteString(newline())
         for _, f := range model {
-            fieldName := f.columnName//column2Modelfield(f.columnName)
+            fieldName := column2DynamicName(modelName, f.columnName)
             builder.WriteString(columnSpace())
             builder.WriteString(columnSpace())
             builder.WriteString(columnSpace())
@@ -207,5 +210,5 @@ func genXml(config config, tableName string, model []modelInfo) {
 }
 
 func getIfStr(ctype, name string) string {
-    return strings.Replace(sqlType2IfFormatMap[ctype], "%s", name, -1)
+    return strings.Replace(sqlType2IfFormatMap[ctype], "%s", fmt.Sprintf("{%s}", name), -1)
 }

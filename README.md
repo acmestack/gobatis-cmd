@@ -68,7 +68,7 @@ type TestTable struct {
 
 自动生成包含select、insert、update、delete映射xml文件
 
-文件为： ${PATH}/xml/${表名}.xml
+文件为： ${PATH}/xml/${表名}_mapper.xml
 
 （请根据实际业务自行修改）
 
@@ -171,36 +171,36 @@ func (proxy *TestTableCallProxy) Tx(txFunc func(s *TestTableCallProxy) bool) {
     })
 }
 
-func (proxy *TestTableCallProxy)SelectTestTable(model TestTable) []TestTable {
+func (proxy *TestTableCallProxy)SelectTestTable(model TestTable) ([]TestTable, error) {
     var dataList []TestTable
-    (*gobatis.Session)(proxy).Select("selectTestTable").Context(context.Background()).Param(model).Result(&dataList)
-    return dataList
+    err := (*gobatis.Session)(proxy).Select("selectTestTable").Context(context.Background()).Param(model).Result(&dataList)
+    return dataList, err
 }
 
-func (proxy *TestTableCallProxy)SelectTestTableCount(model TestTable) int64 {
+func (proxy *TestTableCallProxy)SelectTestTableCount(model TestTable) (int64, error) {
     var ret int64
-    (*gobatis.Session)(proxy).Select("selectTestTableCount").Context(context.Background()).Param(model).Result(&ret)
-    return ret
+    err := (*gobatis.Session)(proxy).Select("selectTestTableCount").Context(context.Background()).Param(model).Result(&ret)
+    return ret, err
 }
 
-func (proxy *TestTableCallProxy)InsertTestTable(model TestTable) (int64, int64) {
+func (proxy *TestTableCallProxy)InsertTestTable(model TestTable) (int64, int64, error) {
     var ret int64
     runner := (*gobatis.Session)(proxy).Insert("insertTestTable").Context(context.Background()).Param(model)
-    runner.Result(&ret)
+    err := runner.Result(&ret)
     id := runner.LastInsertId()
-    return ret, id
+    return ret, id, err
 }
 
-func (proxy *TestTableCallProxy)UpdateTestTable(model TestTable) int64 {
+func (proxy *TestTableCallProxy)UpdateTestTable(model TestTable) (int64, error) {
     var ret int64
-    (*gobatis.Session)(proxy).Update("updateTestTable").Context(context.Background()).Param(model).Result(&ret)
-    return ret
+    err := (*gobatis.Session)(proxy).Update("updateTestTable").Context(context.Background()).Param(model).Result(&ret)
+    return ret, err
 }
 
-func (proxy *TestTableCallProxy)DeleteTestTable(model TestTable) int64 {
+func (proxy *TestTableCallProxy)DeleteTestTable(model TestTable) (int64, error) {
     var ret int64
-    (*gobatis.Session)(proxy).Delete("deleteTestTable").Context(context.Background()).Param(model).Result(&ret)
-    return ret
+    err := (*gobatis.Session)(proxy).Delete("deleteTestTable").Context(context.Background()).Param(model).Result(&ret)
+    return ret, err
 }
 ```
 

@@ -10,15 +10,15 @@ package main
 
 import "testing"
 
-func createModeInfo() *[]modelInfo{
+func createModeInfo() *[]modelInfo {
     model := []modelInfo{}
     info := modelInfo{
         columnName: "id",
         dataType:   "bigint",
         nullable:   "NO",
         comment:    "id",
-        tag  :      "id",
-        columnKey: "PRI",
+        tag:        "id",
+        columnKey:  "PRI",
     }
     model = append(model, info)
 
@@ -27,7 +27,7 @@ func createModeInfo() *[]modelInfo{
         dataType:   "varchar",
         nullable:   "NO",
         comment:    "username",
-        tag  :      "username",
+        tag:        "username",
     }
     model = append(model, info)
 
@@ -36,7 +36,7 @@ func createModeInfo() *[]modelInfo{
         dataType:   "varchar",
         nullable:   "NO",
         comment:    "password",
-        tag  :      "password",
+        tag:        "password",
     }
     model = append(model, info)
 
@@ -45,7 +45,7 @@ func createModeInfo() *[]modelInfo{
         dataType:   "timestamp",
         nullable:   "YES",
         comment:    "update_time",
-        tag  :      "update_time",
+        tag:        "update_time",
     }
     model = append(model, info)
     return &model
@@ -56,6 +56,7 @@ func TestMode(t *testing.T) {
         packageName: "test_package",
         path:        "c:/tmp/",
         tagName:     "xfield",
+        mapperFile:  "xml",
         modelFile:   "model.go",
     }
 
@@ -67,8 +68,11 @@ func TestXml(t *testing.T) {
         packageName: "test_package",
         path:        "c:/tmp/",
         tagName:     "xfield",
+        mapperFile:  "xml",
     }
 
+    genXml(config, "test_table", *createModeInfo())
+    config.mapperFile = "go"
     genXml(config, "test_table", *createModeInfo())
 }
 
@@ -77,16 +81,32 @@ func TestProxy(t *testing.T) {
         packageName: "test_package",
         path:        "c:/tmp/",
         tagName:     "xfield",
+        mapperFile:   "xml",
     }
 
     genProxy(config, "test_table", *createModeInfo())
 }
 
-func TestAll(t *testing.T) {
+func TestAll1(t *testing.T) {
     config := config{
         packageName: "test_package",
         path:        "c:/tmp/",
         tagName:     "xfield",
+        mapperFile:   "xml",
+        //modelFile:   "model.go",
+    }
+    info := *createModeInfo()
+    genModel(config, "test_table", info)
+    genXml(config, "test_table", info)
+    genProxy(config, "test_table", info)
+}
+
+func TestAll2(t *testing.T) {
+    config := config{
+        packageName: "test_package",
+        path:        "c:/tmp/",
+        tagName:     "xfield",
+        mapperFile:   "go",
         //modelFile:   "model.go",
     }
     info := *createModeInfo()

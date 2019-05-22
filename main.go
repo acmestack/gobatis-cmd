@@ -21,6 +21,7 @@ type config struct {
     packageName string
     modelFile   string
     tagName     string
+    mapperFile  string
 }
 
 func main() {
@@ -35,6 +36,7 @@ func main() {
     path := flag.String("path", "", "root path to save files")
     modelfile := flag.String("model", "", "the name of model file")
     tagName := flag.String("tag", "xfield", "the name of field tag")
+    mapper := flag.String("mapper", "xml", "generate go/xml mapper file")
     flag.Parse()
 
     db, err := connect(*driver, *username, *pw, *host, *port)
@@ -51,6 +53,7 @@ func main() {
         packageName: *packageName,
         modelFile:   *modelfile,
         tagName:     *tagName,
+        mapperFile:  *mapper,
     }
 
     if *tableName == "" {

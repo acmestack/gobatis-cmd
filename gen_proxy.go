@@ -70,7 +70,7 @@ func genProxy(config config, tableName string, models []modelInfo) {
             builder.WriteString(newline())
         } else if config.mapperFile == "go" {
             builder.WriteString(columnSpace())
-            builder.WriteString(fmt.Sprintf("gobatis.RegisterMapperData(%s.%sMapper)", config.packageName, modelName))
+            builder.WriteString(fmt.Sprintf("gobatis.RegisterMapperData([]byte(%sMapper))", modelName))
             builder.WriteString(newline())
         }
 
@@ -78,7 +78,7 @@ func genProxy(config config, tableName string, models []modelInfo) {
         builder.WriteString(newline())
         builder.WriteString(newline())
 
-        builder.WriteString(fmt.Sprintf("func New(proxyMrg *gobatis.SessionManager) *%s {", proxyName))
+        builder.WriteString(fmt.Sprintf("func New%s(proxyMrg *gobatis.SessionManager) *%s {", proxyName, proxyName))
         builder.WriteString(newline())
 
         builder.WriteString(columnSpace())

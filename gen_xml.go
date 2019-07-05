@@ -15,11 +15,11 @@ import (
 )
 
 func genXml(config config, tableName string, model []modelInfo) {
-    xmlDir := config.path + "xml/"
-    if !io.IsPathExists(xmlDir) {
-        io.Mkdir(xmlDir)
-    }
     if config.mapperFile == "xml" {
+        xmlDir := config.path + "xml/"
+        if !io.IsPathExists(xmlDir) {
+            io.Mkdir(xmlDir)
+        }
         xmlFile, err := io.OpenAppend(xmlDir + tableName + "_mapper.xml")
         if err == nil {
             defer xmlFile.Close()
@@ -29,6 +29,10 @@ func genXml(config config, tableName string, model []modelInfo) {
             io.Write(xmlFile, []byte(builder.String()))
         }
     } else if config.mapperFile == "go"{
+        xmlDir := config.path
+        if !io.IsPathExists(xmlDir) {
+            io.Mkdir(xmlDir)
+        }
         xmlFile, err := io.OpenAppend(xmlDir + tableName + "_mapper.go")
         if err == nil {
             defer xmlFile.Close()

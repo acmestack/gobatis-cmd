@@ -90,7 +90,7 @@ func genProxy(config config, tableName string, models []modelInfo) {
         builder.WriteString(newline())
 
         //Tx
-        builder.WriteString(fmt.Sprintf("func (proxy *%s) Tx(txFunc func(s *%s) bool) {", proxyName, proxyName))
+        builder.WriteString(fmt.Sprintf("func (proxy *%s) Tx(txFunc func(s *%s) error) {", proxyName, proxyName))
         builder.WriteString(newline())
 
         builder.WriteString(columnSpace())
@@ -98,7 +98,7 @@ func genProxy(config config, tableName string, models []modelInfo) {
         builder.WriteString(newline())
 
         builder.WriteString(columnSpace())
-        builder.WriteString(`sess.Tx(func(session *gobatis.Session) bool {`)
+        builder.WriteString(`sess.Tx(func(session *gobatis.Session) error {`)
         builder.WriteString(newline())
 
         builder.WriteString(columnSpace())

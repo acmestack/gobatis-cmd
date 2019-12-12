@@ -87,6 +87,17 @@ func TestProxy(t *testing.T) {
     genProxy(config, "test_table", *createModeInfo())
 }
 
+func TestV2Proxy(t *testing.T) {
+    config := config{
+        packageName: "test_package",
+        path:        "c:/tmp/",
+        tagName:     "xfield",
+        mapperFile:   "xml",
+    }
+
+    genV2Proxy(config, "test_table", *createModeInfo())
+}
+
 func TestAll1(t *testing.T) {
     config := config{
         packageName: "test_package",

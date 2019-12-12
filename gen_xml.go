@@ -65,7 +65,7 @@ func buildMapper(builder *strings.Builder, config config, tableName string, mode
     builder.WriteString("<sql id=\"columns_id\">")
     columns := ""
     for i := range model {
-        columns += model[i].columnName
+        columns += formatColumnName(tableName, model[i].columnName)
         if i < len(model)-1 {
             columns += ","
         }
@@ -244,4 +244,8 @@ func buildMapper(builder *strings.Builder, config config, tableName string, mode
 
 func getIfStr(ctype, name string) string {
     return strings.Replace(sqlType2IfFormatMap[ctype], "%s", fmt.Sprintf("{%s}", name), -1)
+}
+
+func formatColumnName(tableName, columnName string) string {
+    return tableName + "." + columnName
 }

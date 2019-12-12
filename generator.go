@@ -44,7 +44,7 @@ func generate(config config, db *db, dbName, tableName string) error {
 
     genModel(config, tableName, models)
     genXml(config, tableName, models)
-    genProxy(config, tableName, models)
+    genV2Proxy(config, tableName, models)
 
     return nil
 }

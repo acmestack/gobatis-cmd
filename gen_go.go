@@ -34,7 +34,7 @@ func genGo(config config, tableName string, model []modelInfo) {
             builder.WriteString(fmt.Sprintf("var %sMapper = `", tableName2ModelName(tableName)))
             builder.WriteString(newline())
 
-            buildMapper(&builder, config, tableName, model)
+            buildGoMapper(&builder, config, tableName, model)
             builder.WriteString("`")
             builder.WriteString(newline())
 
@@ -43,24 +43,27 @@ func genGo(config config, tableName string, model []modelInfo) {
     }
 }
 
-func buildMapper(builder *strings.Builder, config config, tableName string, model []modelInfo) {
+func buildGoMapper(builder *strings.Builder, config config, tableName string, model []modelInfo) {
     modelName := tableName2ModelName(tableName)
     builder.WriteString(fmt.Sprintf("<mapper namespace=\"%s.%s\">", config.packageName, modelName))
     builder.WriteString(newline())
 
     builder.WriteString(columnSpace())
     builder.WriteString("<sql id=\"columns_id\">")
-    columns := ""
+    columns := "` + \""
     for i := range model {
         columns += formatColumnName(tableName, model[i].columnName)
         if i < len(model)-1 {
             columns += ","
         }
     }
+    columns += "\" + `"
     builder.WriteString(columns)
     builder.WriteString("</sql>")
     builder.WriteString(newline())
     builder.WriteString(newline())
+
+    tableName = writeBackQuote(tableName)
 
     //select
     builder.WriteString(columnSpace())
@@ -79,7 +82,8 @@ func buildMapper(builder *strings.Builder, config config, tableName string, mode
         builder.WriteString(columnSpace())
         builder.WriteString(columnSpace())
         builder.WriteString(columnSpace())
-        builder.WriteString(fmt.Sprintf("<if test=\"%s\">AND %s = #{%s} </if>", getIfStr(f.dataType, fieldName), f.columnName, fieldName))
+        builder.WriteString(fmt.Sprintf("<if test=\"%s\">AND %s = #{%s} </if>",
+            getIfStr(f.dataType, fieldName), writeBackQuote(f.columnName), fieldName))
         builder.WriteString(newline())
     }
     builder.WriteString(columnSpace())
@@ -109,7 +113,8 @@ func buildMapper(builder *strings.Builder, config config, tableName string, mode
         builder.WriteString(columnSpace())
         builder.WriteString(columnSpace())
         builder.WriteString(columnSpace())
-        builder.WriteString(fmt.Sprintf("<if test=\"%s\">AND %s = #{%s} </if>", getIfStr(f.dataType, fieldName), f.columnName, fieldName))
+        builder.WriteString(fmt.Sprintf("<if test=\"%s\">AND %s = #{%s} </if>",
+            getIfStr(f.dataType, fieldName), writeBackQuote(f.columnName), fieldName))
         builder.WriteString(newline())
     }
     builder.WriteString(columnSpace())
@@ -176,7 +181,8 @@ func buildMapper(builder *strings.Builder, config config, tableName string, mode
         builder.WriteString(columnSpace())
         builder.WriteString(columnSpace())
         builder.WriteString(columnSpace())
-        builder.WriteString(fmt.Sprintf("<if test=\"%s\"> %s = #{%s} </if>", getIfStr(f.dataType, fieldName), f.columnName, fieldName))
+        builder.WriteString(fmt.Sprintf("<if test=\"%s\"> %s = #{%s} </if>",
+            getIfStr(f.dataType, fieldName), writeBackQuote(f.columnName), fieldName))
         builder.WriteString(newline())
     }
     builder.WriteString(columnSpace())
@@ -187,7 +193,8 @@ func buildMapper(builder *strings.Builder, config config, tableName string, mode
         f := model[index]
         builder.WriteString(columnSpace())
         builder.WriteString(columnSpace())
-        builder.WriteString(fmt.Sprintf("WHERE %s = #{%s}", f.columnName, column2DynamicName(modelName, f.columnName)))
+        builder.WriteString(fmt.Sprintf("WHERE %s = #{%s}",
+            writeBackQuote(f.columnName), column2DynamicName(modelName, f.columnName)))
         builder.WriteString(newline())
     }
     builder.WriteString(columnSpace())
@@ -213,7 +220,8 @@ func buildMapper(builder *strings.Builder, config config, tableName string, mode
         builder.WriteString(columnSpace())
         builder.WriteString(columnSpace())
         builder.WriteString(columnSpace())
-        builder.WriteString(fmt.Sprintf("<if test=\"%s\">AND %s = #{%s} </if>", getIfStr(f.dataType, fieldName), f.columnName, fieldName))
+        builder.WriteString(fmt.Sprintf("<if test=\"%s\">AND %s = #{%s} </if>",
+            getIfStr(f.dataType, fieldName), writeBackQuote(f.columnName), fieldName))
         builder.WriteString(newline())
     }
     builder.WriteString(columnSpace())
@@ -233,6 +241,10 @@ func getIfStr(ctype, name string) string {
     return strings.Replace(sqlType2IfFormatMap[ctype], "%s", fmt.Sprintf("{%s}", name), -1)
 }
 
+func writeBackQuote(src string) string {
+    return "` + \"`" + src + "`\" + `"
+}
+
 func formatColumnName(tableName, columnName string) string {
-    return tableName + "." + columnName
+    return fmt.Sprintf("`%s`", columnName)
 }

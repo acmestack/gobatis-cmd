@@ -14,24 +14,36 @@ import (
     "strings"
 )
 
-func genXml(config config, tableName string, model []modelInfo) {
-    if config.mapperFile == "xml" {
-        xmlDir := config.path + "xml/"
+func genGo(config config, tableName string, model []modelInfo) {
+    if config.mapperFile == "go"{
+        xmlDir := config.path
         if !io.IsPathExists(xmlDir) {
             io.Mkdir(xmlDir)
         }
-        xmlFile, err := io.OpenAppend(xmlDir + tableName + "_mapper.xml")
+        xmlFile, err := io.OpenAppend(xmlDir + tableName + "_mapper.go")
         if err == nil {
             defer xmlFile.Close()
 
             builder := strings.Builder{}
-            buildMapperV2(&builder, config, tableName, model, formatXmlColumnName)
+
+            builder.WriteString("package ")
+            builder.WriteString(config.packageName)
+            builder.WriteString(newline())
+            builder.WriteString(newline())
+
+            builder.WriteString(fmt.Sprintf("var %sMapper = `", tableName2ModelName(tableName)))
+            builder.WriteString(newline())
+
+            buildMapper(&builder, config, tableName, model)
+            builder.WriteString("`")
+            builder.WriteString(newline())
+
             io.Write(xmlFile, []byte(builder.String()))
         }
     }
 }
 
-func buildMapperV2(builder *strings.Builder, config config, tableName string, model []modelInfo, columnFunc func(tableName, columnName string) string) {
+func buildMapper(builder *strings.Builder, config config, tableName string, model []modelInfo) {
     modelName := tableName2ModelName(tableName)
     builder.WriteString(fmt.Sprintf("<mapper namespace=\"%s.%s\">", config.packageName, modelName))
     builder.WriteString(newline())
@@ -39,9 +51,8 @@ func buildMapperV2(builder *strings.Builder, config config, tableName string, mo
     builder.WriteString(columnSpace())
     builder.WriteString("<sql id=\"columns_id\">")
     columns := ""
-    tableName = fmt.Sprintf("`%s`", tableName)
     for i := range model {
-        columns += columnFunc(tableName, model[i].columnName)
+        columns += formatColumnName(tableName, model[i].columnName)
         if i < len(model)-1 {
             columns += ","
         }
@@ -68,7 +79,7 @@ func buildMapperV2(builder *strings.Builder, config config, tableName string, mo
         builder.WriteString(columnSpace())
         builder.WriteString(columnSpace())
         builder.WriteString(columnSpace())
-        builder.WriteString(fmt.Sprintf("<if test=\"%s\">AND `%s` = #{%s} </if>", getIfStr(f.dataType, fieldName), f.columnName, fieldName))
+        builder.WriteString(fmt.Sprintf("<if test=\"%s\">AND %s = #{%s} </if>", getIfStr(f.dataType, fieldName), f.columnName, fieldName))
         builder.WriteString(newline())
     }
     builder.WriteString(columnSpace())
@@ -98,7 +109,7 @@ func buildMapperV2(builder *strings.Builder, config config, tableName string, mo
         builder.WriteString(columnSpace())
         builder.WriteString(columnSpace())
         builder.WriteString(columnSpace())
-        builder.WriteString(fmt.Sprintf("<if test=\"%s\">AND `%s` = #{%s} </if>", getIfStr(f.dataType, fieldName), f.columnName, fieldName))
+        builder.WriteString(fmt.Sprintf("<if test=\"%s\">AND %s = #{%s} </if>", getIfStr(f.dataType, fieldName), f.columnName, fieldName))
         builder.WriteString(newline())
     }
     builder.WriteString(columnSpace())
@@ -165,7 +176,7 @@ func buildMapperV2(builder *strings.Builder, config config, tableName string, mo
         builder.WriteString(columnSpace())
         builder.WriteString(columnSpace())
         builder.WriteString(columnSpace())
-        builder.WriteString(fmt.Sprintf("<if test=\"%s\"> `%s` = #{%s} </if>", getIfStr(f.dataType, fieldName), f.columnName, fieldName))
+        builder.WriteString(fmt.Sprintf("<if test=\"%s\"> %s = #{%s} </if>", getIfStr(f.dataType, fieldName), f.columnName, fieldName))
         builder.WriteString(newline())
     }
     builder.WriteString(columnSpace())
@@ -176,7 +187,7 @@ func buildMapperV2(builder *strings.Builder, config config, tableName string, mo
         f := model[index]
         builder.WriteString(columnSpace())
         builder.WriteString(columnSpace())
-        builder.WriteString(fmt.Sprintf("WHERE `%s` = #{%s}", f.columnName, column2DynamicName(modelName, f.columnName)))
+        builder.WriteString(fmt.Sprintf("WHERE %s = #{%s}", f.columnName, column2DynamicName(modelName, f.columnName)))
         builder.WriteString(newline())
     }
     builder.WriteString(columnSpace())
@@ -202,7 +213,7 @@ func buildMapperV2(builder *strings.Builder, config config, tableName string, mo
         builder.WriteString(columnSpace())
         builder.WriteString(columnSpace())
         builder.WriteString(columnSpace())
-        builder.WriteString(fmt.Sprintf("<if test=\"%s\">AND `%s` = #{%s} </if>", getIfStr(f.dataType, fieldName), f.columnName, fieldName))
+        builder.WriteString(fmt.Sprintf("<if test=\"%s\">AND %s = #{%s} </if>", getIfStr(f.dataType, fieldName), f.columnName, fieldName))
         builder.WriteString(newline())
     }
     builder.WriteString(columnSpace())
@@ -218,6 +229,10 @@ func buildMapperV2(builder *strings.Builder, config config, tableName string, mo
     builder.WriteString(newline())
 }
 
-func formatXmlColumnName(tableName, columnName string) string {
-    return fmt.Sprintf("`%s`", columnName)
+func getIfStr(ctype, name string) string {
+    return strings.Replace(sqlType2IfFormatMap[ctype], "%s", fmt.Sprintf("{%s}", name), -1)
+}
+
+func formatColumnName(tableName, columnName string) string {
+    return tableName + "." + columnName
 }

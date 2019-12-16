@@ -73,7 +73,7 @@ func TestXml(t *testing.T) {
 
     genXml(config, "test_table", *createModeInfo())
     config.mapperFile = "go"
-    genXml(config, "test_table", *createModeInfo())
+    genGo(config, "test_table", *createModeInfo())
 }
 
 func TestProxy(t *testing.T) {

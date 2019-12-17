@@ -20,7 +20,7 @@ func genXml(config config, tableName string, model []modelInfo) {
         if !io.IsPathExists(xmlDir) {
             io.Mkdir(xmlDir)
         }
-        xmlFile, err := io.OpenAppend(xmlDir + tableName + "_mapper.xml")
+        xmlFile, err := io.OpenAppend(xmlDir + strings.ToLower(tableName) + "_mapper.xml")
         if err == nil {
             defer xmlFile.Close()
 
@@ -34,7 +34,7 @@ func genXml(config config, tableName string, model []modelInfo) {
         if !io.IsPathExists(xmlDir) {
             io.Mkdir(xmlDir)
         }
-        xmlFile, err := io.OpenAppend(xmlDir + tableName + "_mapper.go")
+        xmlFile, err := io.OpenAppend(xmlDir + strings.ToLower(tableName) + "_mapper.go")
         if err == nil {
             defer xmlFile.Close()
 

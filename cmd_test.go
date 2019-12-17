@@ -125,3 +125,17 @@ func TestAll2(t *testing.T) {
     genXml(config, "test_table", info)
     genProxy(config, "test_table", info)
 }
+
+func TestAll3(t *testing.T) {
+    config := config{
+        packageName: "test_package",
+        path:        "c:/tmp/",
+        tagName:     "xfield",
+        mapperFile:   "go",
+        //modelFile:   "model.go",
+    }
+    info := *createModeInfo()
+    genModel(config, "TEST_TABLE", info)
+    genXml(config, "TEST_TABLE", info)
+    genV2Proxy(config, "TEST_TABLE", info)
+}

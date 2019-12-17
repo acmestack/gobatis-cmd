@@ -19,7 +19,7 @@ func genProxy(config config, tableName string, models []modelInfo) {
     if !io.IsPathExists(mapperDir) {
         io.Mkdir(mapperDir)
     }
-    mapperFile, err := io.OpenAppend(mapperDir + tableName + "_proxy.go")
+    mapperFile, err := io.OpenAppend(mapperDir + strings.ToLower(tableName) + "_proxy.go")
     if err == nil {
         defer mapperFile.Close()
 

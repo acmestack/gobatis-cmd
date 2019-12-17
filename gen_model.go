@@ -30,7 +30,7 @@ func genModel(config config, tableName string, model []modelInfo) {
     }
     fileName := config.modelFile
     if fileName == "" {
-        fileName = tableName + ".go"
+        fileName = strings.ToLower(tableName) + ".go"
     }
     exist := io.IsPathExists(modelDir + fileName)
     modelFile, err := io.OpenAppend(modelDir + fileName)

@@ -18,12 +18,12 @@ func columnSpace() string {
     return "    "
 }
 
-func tableName2ModelName(tablename string) string {
-    return snake2camel(tablename)
+func tableName2ModelName(tableName string) string {
+    return snake2camel(strings.ToLower(tableName))
 }
 
 func column2Modelfield(column string) string {
-    return snake2camel(column)
+    return snake2camel(strings.ToLower(column))
 }
 
 func column2DynamicName(tableName, column string) string {

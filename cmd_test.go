@@ -131,7 +131,7 @@ func TestAll3(t *testing.T) {
         packageName: "test_package",
         path:        "c:/tmp/",
         tagName:     "xfield",
-        mapperFile:   "go",
+        mapperFile:   "xml",
         //modelFile:   "model.go",
     }
     info := *createModeInfo()

@@ -75,62 +75,61 @@ type TestTable struct {
 例子：
 ```
 <mapper namespace="test_package.TestTable">
-    <sql id="columns_id">id,username,password,update_time</sql>
+    <sql id="columns_id">`id`,`username`,`password`,`update_time`</sql>
 
     <select id="selectTestTable">
-        SELECT <include refid="columns_id"> </include> FROM test_table
+        SELECT <include refid="columns_id"> </include> FROM `TEST_TABLE`
         <where>
-            <if test="id != nil and id != 0">AND id = #{id} </if>
-            <if test="username != nil">AND username = #{username} </if>
-            <if test="password != nil">AND password = #{password} </if>
-            <if test="update_time != nil">AND update_time = #{update_time} </if>
+            <if test="{TestTable.id} != nil and {TestTable.id} != 0">AND `id` = #{TestTable.id} </if>
+            <if test="{TestTable.username} != nil">AND `username` = #{TestTable.username} </if>
+            <if test="{TestTable.password} != nil">AND `password` = #{TestTable.password} </if>
+            <if test="{TestTable.update_time} != nil">AND `update_time` = #{TestTable.update_time} </if>
         </where>
     </select>
 
     <select id="selectTestTableCount">
-        SELECT COUNT(*) FROM test_table
+        SELECT COUNT(*) FROM `TEST_TABLE`
         <where>
-            <if test="id != nil and id != 0">AND id = #{id} </if>
-            <if test="username != nil">AND username = #{username} </if>
-            <if test="password != nil">AND password = #{password} </if>
-            <if test="update_time != nil">AND update_time = #{update_time} </if>
+            <if test="{TestTable.id} != nil and {TestTable.id} != 0">AND `id` = #{TestTable.id} </if>
+            <if test="{TestTable.username} != nil">AND `username` = #{TestTable.username} </if>
+            <if test="{TestTable.password} != nil">AND `password` = #{TestTable.password} </if>
+            <if test="{TestTable.update_time} != nil">AND `update_time` = #{TestTable.update_time} </if>
         </where>
     </select>
 
     <insert id="insertTestTable">
-        INSERT INTO test_table (id,username,password,update_time)
+        INSERT INTO `TEST_TABLE` (`id`,`username`,`password`,`update_time`)
         VALUES(
-        #{id},
-        #{username},
-        #{password},
-        #{update_time}
+        #{TestTable.id},
+        #{TestTable.username},
+        #{TestTable.password},
+        #{TestTable.update_time}
         )
     </insert>
 
     <update id="updateTestTable">
-        UPDATE test_table
+        UPDATE `TEST_TABLE`
         <set>
-            <if test="id != nil and id != 0"> id = #{id} </if>
-            <if test="username != nil"> username = #{username} </if>
-            <if test="password != nil"> password = #{password} </if>
-            <if test="update_time != nil"> update_time = #{update_time} </if>
+            <if test="{TestTable.username} != nil"> `username` = #{TestTable.username} </if>
+            <if test="{TestTable.password} != nil"> `password` = #{TestTable.password} </if>
+            <if test="{TestTable.update_time} != nil"> `update_time` = #{TestTable.update_time} </if>
         </set>
-        WHERE id = #{id}
+        WHERE `id` = #{TestTable.id}
     </update>
 
     <delete id="deleteTestTable">
-        DELETE FROM test_table
+        DELETE FROM `TEST_TABLE`
         <where>
-            <if test="id != nil and id != 0">AND id = #{id} </if>
-            <if test="username != nil">AND username = #{username} </if>
-            <if test="password != nil">AND password = #{password} </if>
-            <if test="update_time != nil">AND update_time = #{update_time} </if>
+            <if test="{TestTable.id} != nil and {TestTable.id} != 0">AND `id` = #{TestTable.id} </if>
+            <if test="{TestTable.username} != nil">AND `username` = #{TestTable.username} </if>
+            <if test="{TestTable.password} != nil">AND `password` = #{TestTable.password} </if>
+            <if test="{TestTable.update_time} != nil">AND `update_time` = #{TestTable.update_time} </if>
         </where>
     </delete>
 </mapper>
 ```
 
-### 3、代理
+### 3、代理（目前已修改为操作方法）
 
 文件为： ${PATH}/${表名}_proxy.go
 
@@ -139,9 +138,7 @@ type TestTable struct {
 1. package包名
 2. import包
 3. init方法（初始化model、初始化xml，请根据实际业务自行修改）
-4. New方法：使用SessionManager获得Proxy，见[gobatis](https://github.com/xfali/gobatis)
-5. 事务方法Tx
-6. 与xml相匹配的代理方法
+4. 与xml相匹配的代理函数
 
 例子：
 ```
@@ -152,54 +149,41 @@ import (
     "github.com/xfali/gobatis"
 )
 
-type TestTableCallProxy gobatis.Session
-
 func init() {
     modelV := TestTable{}
     gobatis.RegisterModel(&modelV)
-    gobatis.RegisterMapperFile("c:/tmp/xml/test_table.xml")
+    gobatis.RegisterMapperFile("c:/tmp/xml/test_table_mapper.xml")
 }
 
-func New(proxyMrg *gobatis.SessionManager) *TestTableCallProxy {
-    return (*TestTableCallProxy)(proxyMrg.NewSession())
-}
-
-func (proxy *TestTableCallProxy) Tx(txFunc func(s *TestTableCallProxy) bool) {
-    sess := (*gobatis.Session)(proxy)
-    sess.Tx(func(session *gobatis.Session) bool {
-        return txFunc(proxy)
-    })
-}
-
-func (proxy *TestTableCallProxy)SelectTestTable(model TestTable) ([]TestTable, error) {
+func SelectTestTable(sess *gobatis.Session, model TestTable) ([]TestTable, error) {
     var dataList []TestTable
-    err := (*gobatis.Session)(proxy).Select("selectTestTable").Context(context.Background()).Param(model).Result(&dataList)
+    err := sess.Select("selectTestTable").Context(context.Background()).Param(model).Result(&dataList)
     return dataList, err
 }
 
-func (proxy *TestTableCallProxy)SelectTestTableCount(model TestTable) (int64, error) {
+func SelectTestTableCount(sess *gobatis.Session, model TestTable) (int64, error) {
     var ret int64
-    err := (*gobatis.Session)(proxy).Select("selectTestTableCount").Context(context.Background()).Param(model).Result(&ret)
+    err := sess.Select("selectTestTableCount").Context(context.Background()).Param(model).Result(&ret)
     return ret, err
 }
 
-func (proxy *TestTableCallProxy)InsertTestTable(model TestTable) (int64, int64, error) {
+func InsertTestTable(sess *gobatis.Session, model TestTable) (int64, int64, error) {
     var ret int64
-    runner := (*gobatis.Session)(proxy).Insert("insertTestTable").Context(context.Background()).Param(model)
+    runner := sess.Insert("insertTestTable").Context(context.Background()).Param(model)
     err := runner.Result(&ret)
     id := runner.LastInsertId()
     return ret, id, err
 }
 
-func (proxy *TestTableCallProxy)UpdateTestTable(model TestTable) (int64, error) {
+func UpdateTestTable(sess *gobatis.Session, model TestTable) (int64, error) {
     var ret int64
-    err := (*gobatis.Session)(proxy).Update("updateTestTable").Context(context.Background()).Param(model).Result(&ret)
+    err := sess.Update("updateTestTable").Context(context.Background()).Param(model).Result(&ret)
     return ret, err
 }
 
-func (proxy *TestTableCallProxy)DeleteTestTable(model TestTable) (int64, error) {
+func DeleteTestTable(sess *gobatis.Session, model TestTable) (int64, error) {
     var ret int64
-    err := (*gobatis.Session)(proxy).Delete("deleteTestTable").Context(context.Background()).Param(model).Result(&ret)
+    err := sess.Delete("deleteTestTable").Context(context.Background()).Param(model).Result(&ret)
     return ret, err
 }
 ```
@@ -229,18 +213,14 @@ fac := factory.DefaultFactory{
 fac.Init()
 sessionMgr := gobatis.NewSessionManager(&fac)
 
-proxy := New(sessionMgr)
-ret, insertId := proxy.InsertTestTable(TestTable{Username:"test_user"})
+sess := sessionMgr.NewSession(sessionMgr)
+ret, insertId := InsertTestTable(sess, TestTable{Username:"test_user"})
 
 fmt.Println(ret)
-
-//事务
-proxy.Tx(func(s *TestTableCallProxy) bool {
-    s.UpdateTestTable(TestTable{Id: 1, Username:"user"})
-    return true
-})
-
 ```
+事务:
+
+使用gobatis的session.Tx() 参考[gobatis](https://github.com/xfali/gobatis)
 
 ## 其他
 

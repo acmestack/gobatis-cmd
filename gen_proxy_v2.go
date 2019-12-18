@@ -61,7 +61,7 @@ func genV2Proxy(config config, tableName string, models []modelInfo) {
 
         if config.mapperFile == "xml" {
             builder.WriteString(columnSpace())
-            builder.WriteString(fmt.Sprintf("gobatis.RegisterMapperFile(\"%sxml/%s.xml\")", config.path, tableName))
+            builder.WriteString(fmt.Sprintf("gobatis.RegisterMapperFile(\"%sxml/%s_mapper.xml\")", config.path, strings.ToLower(tableName)))
             builder.WriteString(newline())
         } else if config.mapperFile == "go" {
             builder.WriteString(columnSpace())

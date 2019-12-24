@@ -35,7 +35,7 @@ func main() {
     pw := flag.String("pw", "", "password of db")
     path := flag.String("path", "", "root path to save files")
     modelfile := flag.String("model", "", "the name of model file")
-    tagName := flag.String("tag", "xfield", "the name of field tag")
+    tagName := flag.String("tag", "xfield", "the name of field tag,eg: xfield,json  xfield,json,yaml")
     mapper := flag.String("mapper", "xml", "generate go/xml mapper file")
     flag.Parse()
 

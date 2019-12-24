@@ -67,7 +67,8 @@ func genModel(config config, tableName string, model []modelInfo) {
             builder.WriteString(" ")
             builder.WriteString(sqlType2GoMap[info.dataType])
             builder.WriteString(" ")
-            builder.WriteString(fmt.Sprintf("`%s:\"%s\"`", config.tagName, info.columnName))
+            //builder.WriteString(fmt.Sprintf("`%s:\"%s\"`", config.tagName, info.columnName))
+            writeTag(&builder, config.tagName, info.columnName)
             builder.WriteString(newline())
         }
         builder.WriteString("}")
@@ -75,4 +76,41 @@ func genModel(config config, tableName string, model []modelInfo) {
 
         io.Write(modelFile, []byte(builder.String()))
     }
+}
+
+const(
+    defaultTag = "xfield"
+)
+
+func writeTag(b *strings.Builder, tagName, columnName string) string {
+    oriTags := strings.Split(tagName, ",")
+    var tags []string
+    found := false
+    for _, v := range oriTags {
+        if v != "" {
+            if v == defaultTag {
+                found = true
+            }
+            tags = append(tags, v)
+        }
+    }
+
+    if !found {
+        tags = append(tags, defaultTag)
+    }
+
+    l := len(tags)
+    b.WriteString("`")
+    for _, tag := range tags {
+        if tag == "" {
+            continue
+        }
+        b.WriteString(fmt.Sprintf("%s:\"%s\"", tag, columnName))
+        l--
+        if l > 0 {
+            b.WriteString(" ")
+        }
+    }
+    b.WriteString("`")
+    return b.String()
 }

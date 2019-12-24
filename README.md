@@ -33,7 +33,7 @@ gobatis-cmd -host localhost -port 3306 -user test -pw test -db test_db -pkg test
   -table string
         指定生成的table名称
   -tag string
-        生成Model的tag名称 (default "xfield")
+        生成Model的tag名称,多tag用逗号分隔，如"json,xml" (default "xfield")
   -user string
         数据库的用户名
 ```

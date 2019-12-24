@@ -52,15 +52,77 @@ func createModeInfo() *[]modelInfo {
 }
 
 func TestMode(t *testing.T) {
-    config := config{
-        packageName: "test_package",
-        path:        "c:/tmp/",
-        tagName:     "xfield",
-        mapperFile:  "xml",
-        modelFile:   "model.go",
-    }
+    t.Run("0", func(t *testing.T) {
+        config := config{
+            packageName: "test_package",
+            path:        "c:/tmp/",
+            tagName:     "",
+            mapperFile:  "xml",
+            modelFile:   "model.go",
+        }
 
-    genModel(config, "test_table", *createModeInfo())
+        genModel(config, "test_table", *createModeInfo())
+    })
+
+    t.Run("1", func(t *testing.T) {
+        config := config{
+            packageName: "test_package",
+            path:        "c:/tmp/",
+            tagName:     "xfield",
+            mapperFile:  "xml",
+            modelFile:   "model.go",
+        }
+
+        genModel(config, "test_table", *createModeInfo())
+    })
+
+    t.Run("2", func(t *testing.T) {
+        config := config{
+            packageName: "test_package",
+            path:        "c:/tmp/",
+            tagName:     "xfield,json",
+            mapperFile:  "xml",
+            modelFile:   "model.go",
+        }
+
+        genModel(config, "test_table", *createModeInfo())
+    })
+
+    t.Run("2.1", func(t *testing.T) {
+        config := config{
+            packageName: "test_package",
+            path:        "c:/tmp/",
+            tagName:     "xfield,json,",
+            mapperFile:  "xml",
+            modelFile:   "model.go",
+        }
+
+        genModel(config, "test_table", *createModeInfo())
+    })
+
+    t.Run("2.2", func(t *testing.T) {
+        config := config{
+            packageName: "test_package",
+            path:        "c:/tmp/",
+            tagName:     "xml,json,",
+            mapperFile:  "xml",
+            modelFile:   "model.go",
+        }
+
+        genModel(config, "test_table", *createModeInfo())
+    })
+
+    t.Run("3", func(t *testing.T) {
+        config := config{
+            packageName: "test_package",
+            path:        "c:/tmp/",
+            tagName:     "xfield,json,xml",
+            mapperFile:  "xml",
+            modelFile:   "model.go",
+        }
+
+        genModel(config, "test_table", *createModeInfo())
+    })
 }
 
 func TestXml(t *testing.T) {

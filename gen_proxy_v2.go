@@ -33,9 +33,6 @@ func genV2Proxy(config config, tableName string, models []modelInfo) {
         builder.WriteString("import (")
         builder.WriteString(newline())
         builder.WriteString(columnSpace())
-        builder.WriteString(`"context"`)
-        builder.WriteString(newline())
-        builder.WriteString(columnSpace())
         builder.WriteString(`"github.com/xfali/gobatis"`)
         builder.WriteString(newline())
         //builder.WriteString(columnSpace())
@@ -82,7 +79,7 @@ func genV2Proxy(config config, tableName string, models []modelInfo) {
         builder.WriteString(newline())
 
         builder.WriteString(columnSpace())
-        builder.WriteString(fmt.Sprintf(`err := sess.Select("select%s").Context(context.Background()).Param(model).Result(&dataList)`, modelName))
+        builder.WriteString(fmt.Sprintf(`err := sess.Select("select%s").Param(model).Result(&dataList)`, modelName))
         builder.WriteString(newline())
 
         builder.WriteString(columnSpace())
@@ -103,7 +100,7 @@ func genV2Proxy(config config, tableName string, models []modelInfo) {
         builder.WriteString(newline())
 
         builder.WriteString(columnSpace())
-        builder.WriteString(fmt.Sprintf(`err := sess.Select("select%sCount").Context(context.Background()).Param(model).Result(&ret)`, modelName))
+        builder.WriteString(fmt.Sprintf(`err := sess.Select("select%sCount").Param(model).Result(&ret)`, modelName))
         builder.WriteString(newline())
 
         builder.WriteString(columnSpace())
@@ -124,7 +121,7 @@ func genV2Proxy(config config, tableName string, models []modelInfo) {
         builder.WriteString(newline())
 
         builder.WriteString(columnSpace())
-        builder.WriteString(fmt.Sprintf(`runner := sess.Insert("insert%s").Context(context.Background()).Param(model)`, modelName))
+        builder.WriteString(fmt.Sprintf(`runner := sess.Insert("insert%s").Param(model)`, modelName))
         builder.WriteString(newline())
 
         builder.WriteString(columnSpace())
@@ -153,7 +150,7 @@ func genV2Proxy(config config, tableName string, models []modelInfo) {
         builder.WriteString(newline())
 
         builder.WriteString(columnSpace())
-        builder.WriteString(fmt.Sprintf(`err := sess.Update("update%s").Context(context.Background()).Param(model).Result(&ret)`, modelName))
+        builder.WriteString(fmt.Sprintf(`err := sess.Update("update%s").Param(model).Result(&ret)`, modelName))
         builder.WriteString(newline())
 
         builder.WriteString(columnSpace())
@@ -174,7 +171,7 @@ func genV2Proxy(config config, tableName string, models []modelInfo) {
         builder.WriteString(newline())
 
         builder.WriteString(columnSpace())
-        builder.WriteString(fmt.Sprintf(`err := sess.Delete("delete%s").Context(context.Background()).Param(model).Result(&ret)`, modelName))
+        builder.WriteString(fmt.Sprintf(`err := sess.Delete("delete%s").Param(model).Result(&ret)`, modelName))
         builder.WriteString(newline())
 
         builder.WriteString(columnSpace())

@@ -145,7 +145,6 @@ type TestTable struct {
 package test_package
 
 import (
-    "context"
     "github.com/xfali/gobatis"
 )
 
@@ -157,19 +156,19 @@ func init() {
 
 func SelectTestTable(sess *gobatis.Session, model TestTable) ([]TestTable, error) {
     var dataList []TestTable
-    err := sess.Select("selectTestTable").Context(context.Background()).Param(model).Result(&dataList)
+    err := sess.Select("selectTestTable").Param(model).Result(&dataList)
     return dataList, err
 }
 
 func SelectTestTableCount(sess *gobatis.Session, model TestTable) (int64, error) {
     var ret int64
-    err := sess.Select("selectTestTableCount").Context(context.Background()).Param(model).Result(&ret)
+    err := sess.Select("selectTestTableCount").Param(model).Result(&ret)
     return ret, err
 }
 
 func InsertTestTable(sess *gobatis.Session, model TestTable) (int64, int64, error) {
     var ret int64
-    runner := sess.Insert("insertTestTable").Context(context.Background()).Param(model)
+    runner := sess.Insert("insertTestTable").Param(model)
     err := runner.Result(&ret)
     id := runner.LastInsertId()
     return ret, id, err
@@ -177,13 +176,13 @@ func InsertTestTable(sess *gobatis.Session, model TestTable) (int64, int64, erro
 
 func UpdateTestTable(sess *gobatis.Session, model TestTable) (int64, error) {
     var ret int64
-    err := sess.Update("updateTestTable").Context(context.Background()).Param(model).Result(&ret)
+    err := sess.Update("updateTestTable").Param(model).Result(&ret)
     return ret, err
 }
 
 func DeleteTestTable(sess *gobatis.Session, model TestTable) (int64, error) {
     var ret int64
-    err := sess.Delete("deleteTestTable").Context(context.Background()).Param(model).Result(&ret)
+    err := sess.Delete("deleteTestTable").Param(model).Result(&ret)
     return ret, err
 }
 ```

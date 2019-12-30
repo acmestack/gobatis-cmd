@@ -10,18 +10,10 @@ package main
 
 import (
     "database/sql"
+    "github.com/xfali/gobatis-cmd/common"
 )
 
-type modelInfo struct {
-    columnName string
-    dataType   string
-    nullable   string
-    columnKey  string
-    comment    string
-    tag        string
-}
-
-func generate(config config, db *db, dbName, tableName string) error {
+func generate(config Config, db *db, dbName, tableName string) (err error) {
     sqlStr := `SELECT COLUMN_NAME,DATA_TYPE,IS_NULLABLE,COLUMN_KEY,COLUMN_COMMENT
 		FROM COLUMNS 
 		WHERE table_schema = ? AND TABLE_NAME = ?`
@@ -31,14 +23,14 @@ func generate(config config, db *db, dbName, tableName string) error {
     }
     defer row.Close()
 
-    var models []modelInfo
-    var info modelInfo
+    var models []common.ModelInfo
+    var info common.ModelInfo
     for row.Next() {
-        err := row.Scan(&info.columnName, &info.dataType, &info.nullable, &info.columnKey, &info.comment)
+        err := row.Scan(&info.ColumnName, &info.DataType, &info.Nullable, &info.ColumnKey, &info.Comment)
         if err != nil {
             continue
         }
-        info.tag = info.columnName
+        info.Tag = info.ColumnName
         models = append(models, info)
     }
 
@@ -46,10 +38,10 @@ func generate(config config, db *db, dbName, tableName string) error {
     genXml(config, tableName, models)
     genV2Proxy(config, tableName, models)
 
-    return nil
+    return RunPlugin(config, tableName, models)
 }
 
-func generateAll(config config, db *db, dbName string) error {
+func generateAll(config Config, db *db, dbName string) error {
     sqlStr := `SELECT table_name from tables where table_schema = ?`
     row, err := (*sql.DB)(db).Query(sqlStr, dbName)
     if err != nil {

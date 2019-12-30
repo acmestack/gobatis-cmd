@@ -16,12 +16,13 @@ import (
     "strings"
 )
 
-type config struct {
-    path        string
-    packageName string
-    modelFile   string
-    tagName     string
-    mapperFile  string
+type Config struct {
+    Path        string
+    PackageName string
+    ModelFile   string
+    TagName     string
+    MapperFile  string
+    Plugin      string
 }
 
 func main() {
@@ -37,6 +38,7 @@ func main() {
     modelfile := flag.String("model", "", "the name of model file")
     tagName := flag.String("tag", "xfield", "the name of field tag,eg: xfield,json  xfield,json,yaml")
     mapper := flag.String("mapper", "xml", "generate go/xml mapper file")
+    plugin := flag.String("plugin", "", "path of plugin")
     flag.Parse()
 
     db, err := connect(*driver, *username, *pw, *host, *port)
@@ -48,12 +50,13 @@ func main() {
 
     root := formatPath(*path)
 
-    config := config{
-        path:        root,
-        packageName: *packageName,
-        modelFile:   *modelfile,
-        tagName:     *tagName,
-        mapperFile:  *mapper,
+    config := Config{
+        Path:        root,
+        PackageName: *packageName,
+        ModelFile:   *modelfile,
+        TagName:     *tagName,
+        MapperFile:  *mapper,
+        Plugin:      *plugin,
     }
 
     if *tableName == "" {

@@ -10,25 +10,26 @@ package main
 
 import (
     "fmt"
+    "github.com/xfali/gobatis-cmd/common"
     "github.com/xfali/gobatis-cmd/io"
     "strings"
 )
 
-func findTime(model []modelInfo) bool {
+func findTime(model []common.ModelInfo) bool {
     for _, info := range model {
-        if info.dataType == "date" || info.dataType == "datetime" || info.dataType == "timestamp" || info.dataType == "time" {
+        if info.DataType == "date" || info.DataType == "datetime" || info.DataType == "timestamp" || info.DataType == "time" {
             return true
         }
     }
     return false
 }
 
-func genModel(config config, tableName string, model []modelInfo) {
-    modelDir := config.path
+func genModel(config Config, tableName string, model []common.ModelInfo) {
+    modelDir := config.Path
     if !io.IsPathExists(modelDir) {
         io.Mkdir(modelDir)
     }
-    fileName := config.modelFile
+    fileName := config.ModelFile
     if fileName == "" {
         fileName = strings.ToLower(tableName) + ".go"
     }
@@ -41,38 +42,38 @@ func genModel(config config, tableName string, model []modelInfo) {
         builder := strings.Builder{}
         if !exist {
             builder.WriteString("package ")
-            builder.WriteString(config.packageName)
-            builder.WriteString(newline())
-            builder.WriteString(newline())
+            builder.WriteString(config.PackageName)
+            builder.WriteString(Newline())
+            builder.WriteString(Newline())
 
             if findTime(model) {
                 builder.WriteString("import \"time\"")
-                builder.WriteString(newline())
-                builder.WriteString(newline())
+                builder.WriteString(Newline())
+                builder.WriteString(Newline())
             }
         }
 
         builder.WriteString("type ")
         builder.WriteString(modelName)
         builder.WriteString(" struct {")
-        builder.WriteString(newline())
+        builder.WriteString(Newline())
 
-        builder.WriteString(columnSpace())
+        builder.WriteString(ColumnSpace())
         builder.WriteString(fmt.Sprintf("//TableName gobatis.ModelName `%s`", tableName))
-        builder.WriteString(newline())
+        builder.WriteString(Newline())
 
         for _, info := range model {
-            builder.WriteString(columnSpace())
-            builder.WriteString(column2Modelfield(info.columnName))
+            builder.WriteString(ColumnSpace())
+            builder.WriteString(column2Modelfield(info.ColumnName))
             builder.WriteString(" ")
-            builder.WriteString(sqlType2GoMap[info.dataType])
+            builder.WriteString(sqlType2GoMap[info.DataType])
             builder.WriteString(" ")
-            //builder.WriteString(fmt.Sprintf("`%s:\"%s\"`", config.tagName, info.columnName))
-            writeTag(&builder, config.tagName, info.columnName)
-            builder.WriteString(newline())
+            //builder.WriteString(fmt.Sprintf("`%s:\"%s\"`", config.TagName, info.ColumnName))
+            writeTag(&builder, config.TagName, info.ColumnName)
+            builder.WriteString(Newline())
         }
         builder.WriteString("}")
-        builder.WriteString(newline())
+        builder.WriteString(Newline())
 
         io.Write(modelFile, []byte(builder.String()))
     }

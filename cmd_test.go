@@ -8,44 +8,47 @@
 
 package main
 
-import "testing"
+import (
+    "github.com/xfali/gobatis-cmd/common"
+    "testing"
+)
 
-func createModeInfo() *[]modelInfo {
-    model := []modelInfo{}
-    info := modelInfo{
-        columnName: "id",
-        dataType:   "bigint",
-        nullable:   "NO",
-        comment:    "id",
-        tag:        "id",
-        columnKey:  "PRI",
+func createModeInfo() *[]common.ModelInfo {
+    model := []common.ModelInfo{}
+    info := common.ModelInfo{
+        ColumnName: "id",
+        DataType:   "bigint",
+        Nullable:   "NO",
+        Comment:    "id",
+        Tag:        "id",
+        ColumnKey:  "PRI",
     }
     model = append(model, info)
 
-    info = modelInfo{
-        columnName: "username",
-        dataType:   "varchar",
-        nullable:   "NO",
-        comment:    "username",
-        tag:        "username",
+    info = common.ModelInfo{
+        ColumnName: "username",
+        DataType:   "varchar",
+        Nullable:   "NO",
+        Comment:    "username",
+        Tag:        "username",
     }
     model = append(model, info)
 
-    info = modelInfo{
-        columnName: "password",
-        dataType:   "varchar",
-        nullable:   "NO",
-        comment:    "password",
-        tag:        "password",
+    info = common.ModelInfo{
+        ColumnName: "password",
+        DataType:   "varchar",
+        Nullable:   "NO",
+        Comment:    "password",
+        Tag:        "password",
     }
     model = append(model, info)
 
-    info = modelInfo{
-        columnName: "update_time",
-        dataType:   "timestamp",
-        nullable:   "YES",
-        comment:    "update_time",
-        tag:        "update_time",
+    info = common.ModelInfo{
+        ColumnName: "update_time",
+        DataType:   "timestamp",
+        Nullable:   "YES",
+        Comment:    "update_time",
+        Tag:        "update_time",
     }
     model = append(model, info)
     return &model
@@ -53,72 +56,72 @@ func createModeInfo() *[]modelInfo {
 
 func TestMode(t *testing.T) {
     t.Run("0", func(t *testing.T) {
-        config := config{
-            packageName: "test_package",
-            path:        "c:/tmp/",
-            tagName:     "",
-            mapperFile:  "xml",
-            modelFile:   "model.go",
+        config := Config{
+            PackageName: "test_package",
+            Path:        "c:/tmp/",
+            TagName:     "",
+            MapperFile:  "xml",
+            ModelFile:   "model.go",
         }
 
         genModel(config, "test_table", *createModeInfo())
     })
 
     t.Run("1", func(t *testing.T) {
-        config := config{
-            packageName: "test_package",
-            path:        "c:/tmp/",
-            tagName:     "xfield",
-            mapperFile:  "xml",
-            modelFile:   "model.go",
+        config := Config{
+            PackageName: "test_package",
+            Path:        "c:/tmp/",
+            TagName:     "xfield",
+            MapperFile:  "xml",
+            ModelFile:   "model.go",
         }
 
         genModel(config, "test_table", *createModeInfo())
     })
 
     t.Run("2", func(t *testing.T) {
-        config := config{
-            packageName: "test_package",
-            path:        "c:/tmp/",
-            tagName:     "xfield,json",
-            mapperFile:  "xml",
-            modelFile:   "model.go",
+        config := Config{
+            PackageName: "test_package",
+            Path:        "c:/tmp/",
+            TagName:     "xfield,json",
+            MapperFile:  "xml",
+            ModelFile:   "model.go",
         }
 
         genModel(config, "test_table", *createModeInfo())
     })
 
     t.Run("2.1", func(t *testing.T) {
-        config := config{
-            packageName: "test_package",
-            path:        "c:/tmp/",
-            tagName:     "xfield,json,",
-            mapperFile:  "xml",
-            modelFile:   "model.go",
+        config := Config{
+            PackageName: "test_package",
+            Path:        "c:/tmp/",
+            TagName:     "xfield,json,",
+            MapperFile:  "xml",
+            ModelFile:   "model.go",
         }
 
         genModel(config, "test_table", *createModeInfo())
     })
 
     t.Run("2.2", func(t *testing.T) {
-        config := config{
-            packageName: "test_package",
-            path:        "c:/tmp/",
-            tagName:     "xml,json,",
-            mapperFile:  "xml",
-            modelFile:   "model.go",
+        config := Config{
+            PackageName: "test_package",
+            Path:        "c:/tmp/",
+            TagName:     "xml,json,",
+            MapperFile:  "xml",
+            ModelFile:   "model.go",
         }
 
         genModel(config, "test_table", *createModeInfo())
     })
 
     t.Run("3", func(t *testing.T) {
-        config := config{
-            packageName: "test_package",
-            path:        "c:/tmp/",
-            tagName:     "xfield,json,xml",
-            mapperFile:  "xml",
-            modelFile:   "model.go",
+        config := Config{
+            PackageName: "test_package",
+            Path:        "c:/tmp/",
+            TagName:     "xfield,json,xml",
+            MapperFile:  "xml",
+            ModelFile:   "model.go",
         }
 
         genModel(config, "test_table", *createModeInfo())
@@ -126,47 +129,47 @@ func TestMode(t *testing.T) {
 }
 
 func TestXml(t *testing.T) {
-    config := config{
-        packageName: "test_package",
-        path:        "c:/tmp/",
-        tagName:     "xfield",
-        mapperFile:  "xml",
+    config := Config{
+        PackageName: "test_package",
+        Path:        "c:/tmp/",
+        TagName:     "xfield",
+        MapperFile:  "xml",
     }
 
     genXml(config, "test_table", *createModeInfo())
-    config.mapperFile = "go"
+    config.MapperFile = "go"
     genXml(config, "test_table", *createModeInfo())
 }
 
 func TestProxy(t *testing.T) {
-    config := config{
-        packageName: "test_package",
-        path:        "c:/tmp/",
-        tagName:     "xfield",
-        mapperFile:   "xml",
+    config := Config{
+        PackageName: "test_package",
+        Path:        "c:/tmp/",
+        TagName:     "xfield",
+        MapperFile:  "xml",
     }
 
     genProxy(config, "test_table", *createModeInfo())
 }
 
 func TestV2Proxy(t *testing.T) {
-    config := config{
-        packageName: "test_package",
-        path:        "c:/tmp/",
-        tagName:     "xfield",
-        mapperFile:   "xml",
+    config := Config{
+        PackageName: "test_package",
+        Path:        "c:/tmp/",
+        TagName:     "xfield",
+        MapperFile:  "xml",
     }
 
     genV2Proxy(config, "test_table", *createModeInfo())
 }
 
 func TestAll1(t *testing.T) {
-    config := config{
-        packageName: "test_package",
-        path:        "c:/tmp/",
-        tagName:     "xfield",
-        mapperFile:   "xml",
-        //modelFile:   "model.go",
+    config := Config{
+        PackageName: "test_package",
+        Path:        "c:/tmp/",
+        TagName:     "xfield",
+        MapperFile:  "xml",
+        //ModelFile:   "model.go",
     }
     info := *createModeInfo()
     genModel(config, "test_table", info)
@@ -175,12 +178,12 @@ func TestAll1(t *testing.T) {
 }
 
 func TestAll2(t *testing.T) {
-    config := config{
-        packageName: "test_package",
-        path:        "c:/tmp/",
-        tagName:     "xfield",
-        mapperFile:   "go",
-        //modelFile:   "model.go",
+    config := Config{
+        PackageName: "test_package",
+        Path:        "c:/tmp/",
+        TagName:     "xfield",
+        MapperFile:  "go",
+        //ModelFile:   "model.go",
     }
     info := *createModeInfo()
     genModel(config, "test_table", info)
@@ -189,15 +192,28 @@ func TestAll2(t *testing.T) {
 }
 
 func TestAll3(t *testing.T) {
-    config := config{
-        packageName: "test_package",
-        path:        "c:/tmp/",
-        tagName:     "xfield",
-        mapperFile:   "xml",
-        //modelFile:   "model.go",
+    config := Config{
+        PackageName: "test_package",
+        Path:        "c:/tmp/",
+        TagName:     "xfield",
+        MapperFile:  "xml",
+        //ModelFile:   "model.go",
     }
     info := *createModeInfo()
     genModel(config, "TEST_TABLE", info)
     genXml(config, "TEST_TABLE", info)
     genV2Proxy(config, "TEST_TABLE", info)
+}
+
+func TestPlugin(t *testing.T) {
+    config := Config{
+        PackageName: "test_package",
+        Path:        "c:/tmp/",
+        TagName:     "xfield",
+        MapperFile:  "xml",
+        Plugin: "c:/tmp/webplugin.exe",
+        //ModelFile:   "model.go",
+    }
+    info := *createModeInfo()
+    RunPlugin(config, "TEST_TABLE", info)
 }

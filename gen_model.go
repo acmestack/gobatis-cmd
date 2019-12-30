@@ -38,42 +38,42 @@ func genModel(config Config, tableName string, model []common.ModelInfo) {
     if err == nil {
         defer modelFile.Close()
 
-        modelName := tableName2ModelName(tableName)
+        modelName := common.TableName2ModelName(tableName)
         builder := strings.Builder{}
         if !exist {
             builder.WriteString("package ")
             builder.WriteString(config.PackageName)
-            builder.WriteString(Newline())
-            builder.WriteString(Newline())
+            builder.WriteString(common.Newline())
+            builder.WriteString(common.Newline())
 
             if findTime(model) {
                 builder.WriteString("import \"time\"")
-                builder.WriteString(Newline())
-                builder.WriteString(Newline())
+                builder.WriteString(common.Newline())
+                builder.WriteString(common.Newline())
             }
         }
 
         builder.WriteString("type ")
         builder.WriteString(modelName)
         builder.WriteString(" struct {")
-        builder.WriteString(Newline())
+        builder.WriteString(common.Newline())
 
-        builder.WriteString(ColumnSpace())
+        builder.WriteString(common.ColumnSpace())
         builder.WriteString(fmt.Sprintf("//TableName gobatis.ModelName `%s`", tableName))
-        builder.WriteString(Newline())
+        builder.WriteString(common.Newline())
 
         for _, info := range model {
-            builder.WriteString(ColumnSpace())
-            builder.WriteString(column2Modelfield(info.ColumnName))
+            builder.WriteString(common.ColumnSpace())
+            builder.WriteString(common.Column2Modelfield(info.ColumnName))
             builder.WriteString(" ")
             builder.WriteString(sqlType2GoMap[info.DataType])
             builder.WriteString(" ")
             //builder.WriteString(fmt.Sprintf("`%s:\"%s\"`", config.TagName, info.ColumnName))
             writeTag(&builder, config.TagName, info.ColumnName)
-            builder.WriteString(Newline())
+            builder.WriteString(common.Newline())
         }
         builder.WriteString("}")
-        builder.WriteString(Newline())
+        builder.WriteString(common.Newline())
 
         io.Write(modelFile, []byte(builder.String()))
     }

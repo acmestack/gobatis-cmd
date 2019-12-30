@@ -198,11 +198,13 @@ func TestAll3(t *testing.T) {
         TagName:     "xfield",
         MapperFile:  "xml",
         //ModelFile:   "model.go",
+        Plugin: "c:/tmp/webplugin.exe",
     }
     info := *createModeInfo()
     genModel(config, "TEST_TABLE", info)
     genXml(config, "TEST_TABLE", info)
     genV2Proxy(config, "TEST_TABLE", info)
+    RunPlugin(config, "TEST_TABLE", info)
 }
 
 func TestPlugin(t *testing.T) {

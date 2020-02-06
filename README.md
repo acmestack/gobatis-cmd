@@ -10,7 +10,7 @@ go get github.com/xfali/gobatis-cmd
 
 ## 使用
 ```
-gobatis-cmd -host localhost -port 3306 -user test -pw test -db test_db -pkg test_package -path .
+gobatis-cmd -driver=mysql -host=localhost -port=3306 -user=test -pw=test -db=testdb -pkg=test_package -mapper=xml -path=.
 ```
 
 ```
@@ -188,6 +188,37 @@ func DeleteTestTable(sess *gobatis.Session, model TestTable) (int64, error) {
     return ret, err
 }
 ```
+### template
+
+当使用mapper=template时会生成go template文件，文件为： ${PATH}/template/${表名}_mapper.tmpl
+
+例子：
+
+```cassandraql
+{{define "selectTestTable"}}
+{{$COLUMNS := "`id`,`username`,`password`"}}
+SELECT {{$COLUMNS}} FROM `test_table`
+{{where (ne .Id ) "AND" "id" .Id "" | where (ne .Username "") "AND" "username" .Username | where (ne .Password "") "AND" "password" .Password}}
+{{end}}
+
+{{define "insertTestTable"}}
+{{$COLUMNS := "`id`,`username`,`password`"}}
+INSERT INTO `test_table`({{$COLUMNS}})
+VALUES(
+{{.Id}}, '{{.Username}}', '{{.Password}}')
+{{end}}
+
+{{define "updateTestTable"}}
+UPDATE `test_table`
+{{set (ne .Id ) "id" .Id "" | set (ne .Username "") "username" .Username | set (ne .Password "") "password" .Password}}
+{{where (ne .Id ) "AND" "id" .Id ""}}
+{{end}}
+
+{{define "deleteTestTable"}}
+DELETE FROM `test_table`
+{{where (ne .Id ) "AND" "id" .Id "" | where (ne .Username "") "AND" "username" .Username | where (ne .Password "") "AND" "password" .Password}}
+{{end}}
+```
 
 ### 文件使用
 
@@ -198,20 +229,17 @@ func DeleteTestTable(sess *gobatis.Session, model TestTable) (int64, error) {
 
 例子：
 ```
-fac := factory.DefaultFactory{
-    Host:     "localhost",
-    Port:     3306,
-    DBName:   "test",
-    Username: "root",
-    Password: "123",
-    Charset:  "utf8",
-
-    MaxConn:     1000,
-    MaxIdleConn: 500,
-
-    Log: logging.DefaultLogf,
-}
-fac.Init()
+fac := gobatis.NewFactory(
+    		gobatis.SetMaxConn(100),
+    		gobatis.SetMaxIdleConn(50),
+    		gobatis.SetDataSource(&datasource.MysqlDataSource{
+    			Host:     "localhost",
+    			Port:     3306,
+    			DBName:   "test",
+    			Username: "root",
+    			Password: "123",
+    			Charset:  "utf8",
+    		}))
 sessionMgr := gobatis.NewSessionManager(&fac)
 
 sess := sessionMgr.NewSession(sessionMgr)

@@ -141,6 +141,16 @@ func TestXml(t *testing.T) {
     genXml(config, "test_table", *createModeInfo())
 }
 
+func TestTemplate(t *testing.T) {
+    config := Config{
+        PackageName: "test_package",
+        Path:        "c:/tmp/",
+        TagName:     "xfield",
+        MapperFile:  "template",
+    }
+    genTemplate(config, "test_table", *createModeInfo())
+}
+
 func TestProxy(t *testing.T) {
     config := Config{
         PackageName: "test_package",

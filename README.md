@@ -36,6 +36,8 @@ gobatis-cmd -host localhost -port 3306 -user test -pw test -db test_db -pkg test
         生成Model的tag名称,多tag用逗号分隔，如"json,xml" (default "xfield")
   -user string
         数据库的用户名
+  -mapper string
+        mapper文件类型: xml | template | go （默认xml）
 ```
 
 会在当前目录下生成1个目录及3个文件，分别为：

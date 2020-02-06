@@ -37,16 +37,22 @@ func main() {
     path := flag.String("path", "", "root path to save files")
     modelfile := flag.String("model", "", "the name of model file")
     tagName := flag.String("tag", "xfield", "the name of field tag,eg: xfield,json  xfield,json,yaml")
-    mapper := flag.String("mapper", "xml", "generate go/xml mapper file")
+    mapper := flag.String("mapper", "xml", "generate mapper file: xml | template | go")
     plugin := flag.String("plugin", "", "path of plugin")
     flag.Parse()
 
-    db, err := connect(*driver, *username, *pw, *host, *port)
+    db := buildinDrivers[*driver]
+    if db == nil {
+        log.Print("not support driver: ", *driver)
+        os.Exit(-1)
+    }
+
+    err := db.Open(*driver, genDBInfo(*driver, *dbName, *username, *pw, *host, *port))
     if err != nil {
         log.Print(err)
         os.Exit(-1)
     }
-    defer close(db)
+    defer db.Close()
 
     root := formatPath(*path)
 
@@ -60,13 +66,30 @@ func main() {
     }
 
     if *tableName == "" {
-        err2 := generateAll(config, db, *dbName)
+        tables, err2 := db.QueryTableNames(*dbName)
         if err2 != nil {
             log.Print(err2)
             os.Exit(-2)
         }
+        for _, v := range tables {
+            models, err := db.QueryTableInfo(*dbName, v)
+            if err != nil {
+                log.Print(err)
+                os.Exit(-3)
+            }
+            err = generate(config, models, v)
+            if err != nil {
+                log.Print(err)
+                os.Exit(-3)
+            }
+        }
     } else {
-        err2 := generate(config, db, *dbName, *tableName)
+        models, err := db.QueryTableInfo(*dbName, *tableName)
+        if err != nil {
+            log.Print(err)
+            os.Exit(-3)
+        }
+        err2 := generate(config, models, *tableName)
         if err2 != nil {
             log.Print(err2)
             os.Exit(-2)

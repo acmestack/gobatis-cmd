@@ -190,33 +190,33 @@ func DeleteTestTable(sess *gobatis.Session, model TestTable) (int64, error) {
 ```
 ### template
 
-当使用mapper=template时会生成go template文件，文件为： ${PATH}/template/${表名}_mapper.tmpl
+当参数mapper=template时会生成go template文件，文件为： ${PATH}/template/${表名}_mapper.tmpl
 
 例子：
 
 ```cassandraql
 {{define "selectTestTable"}}
-{{$COLUMNS := "`id`,`username`,`password`"}}
+{{$COLUMNS := "`id`,`username`,`password`,`update_time`"}}
 SELECT {{$COLUMNS}} FROM `test_table`
-{{where (ne .Id ) "AND" "id" .Id "" | where (ne .Username "") "AND" "username" .Username | where (ne .Password "") "AND" "password" .Password}}
+{{where (ne .Id 0) "AND" "id" .Id "" | where (ne .Username "") "AND" "username" .Username | where (ne .Password "") "AND" "password" .Password | where (ne .UpdateTime ) "AND" "update_time" .UpdateTime}}
 {{end}}
 
 {{define "insertTestTable"}}
-{{$COLUMNS := "`id`,`username`,`password`"}}
+{{$COLUMNS := "`id`,`username`,`password`,`update_time`"}}
 INSERT INTO `test_table`({{$COLUMNS}})
 VALUES(
-{{.Id}}, '{{.Username}}', '{{.Password}}')
+{{.Id}}, '{{.Username}}', '{{.Password}}', {{.UpdateTime}})
 {{end}}
 
 {{define "updateTestTable"}}
 UPDATE `test_table`
-{{set (ne .Id ) "id" .Id "" | set (ne .Username "") "username" .Username | set (ne .Password "") "password" .Password}}
-{{where (ne .Id ) "AND" "id" .Id ""}}
+{{set (ne .Id 0) "id" .Id "" | set (ne .Username "") "username" .Username | set (ne .Password "") "password" .Password | set (ne .UpdateTime ) "update_time" .UpdateTime}}
+{{where (ne .Id 0) "AND" "id" .Id ""}}
 {{end}}
 
 {{define "deleteTestTable"}}
 DELETE FROM `test_table`
-{{where (ne .Id ) "AND" "id" .Id "" | where (ne .Username "") "AND" "username" .Username | where (ne .Password "") "AND" "password" .Password}}
+{{where (ne .Id 0) "AND" "id" .Id "" | where (ne .Username "") "AND" "username" .Username | where (ne .Password "") "AND" "password" .Password | where (ne .UpdateTime ) "AND" "update_time" .UpdateTime}}
 {{end}}
 ```
 

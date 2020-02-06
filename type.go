@@ -88,6 +88,11 @@ var sqlType2IfFormatMap = map[string]string{
 	"binary":             "%s != nil",
 	"varbinary":          "%s != nil",
 	"int*":               "%s != nil and %s != 0",
+	"int2":               "%s != nil and %s != 0",
+	"int4":               "%s != nil and %s != 0",
+	"int8":               "%s != nil and %s != 0",
+	"float4":             "%s != nil and %s != 0",
+	"float8":             "%s != nil and %s != 0",
 }
 
 var sqlType2IfCondMap = map[string]string{
@@ -127,4 +132,9 @@ var sqlType2IfCondMap = map[string]string{
 	"binary":             ``,
 	"varbinary":          ``,
 	"int*":               `0`,
+	"int2":               `0`,
+	"int4":               `0`,
+	"int8":               `0`,
+	"float4":             `0`,
+	"float8":             `0`,
 }

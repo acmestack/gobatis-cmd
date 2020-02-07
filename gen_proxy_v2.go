@@ -154,6 +154,35 @@ func genV2Proxy(config Config, tableName string, models []common.ModelInfo) {
         builder.WriteString(common.Newline())
         //insert end
 
+        //insert batch
+        builder.WriteString(fmt.Sprintf("func InsertBatch%s(sess *gobatis.Session, models []%s) (int64, int64, error) {", modelName, modelName))
+        builder.WriteString(common.Newline())
+
+        builder.WriteString(common.ColumnSpace())
+        builder.WriteString("var ret int64")
+        builder.WriteString(common.Newline())
+
+        builder.WriteString(common.ColumnSpace())
+        builder.WriteString(fmt.Sprintf(`runner := sess.Insert("insertBatch%s").Param(models)`, modelName))
+        builder.WriteString(common.Newline())
+
+        builder.WriteString(common.ColumnSpace())
+        builder.WriteString(`err := runner.Result(&ret)`)
+        builder.WriteString(common.Newline())
+
+        builder.WriteString(common.ColumnSpace())
+        builder.WriteString(`id := runner.LastInsertId()`)
+        builder.WriteString(common.Newline())
+
+        builder.WriteString(common.ColumnSpace())
+        builder.WriteString("return ret, id, err")
+        builder.WriteString(common.Newline())
+
+        builder.WriteString("}")
+        builder.WriteString(common.Newline())
+        builder.WriteString(common.Newline())
+        //insert batch end
+
         //update
         builder.WriteString(fmt.Sprintf("func Update%s(sess *gobatis.Session, model %s) (int64, error) {", modelName, modelName))
         builder.WriteString(common.Newline())

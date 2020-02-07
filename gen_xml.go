@@ -180,6 +180,48 @@ func buildMapper(builder *strings.Builder, config Config, tableName string, mode
     builder.WriteString(common.Newline())
     //insert end
 
+    //insert batch
+    builder.WriteString(common.ColumnSpace())
+    builder.WriteString(fmt.Sprintf("<insert id=\"insertBatch%s\">", modelName))
+    builder.WriteString(common.Newline())
+    builder.WriteString(common.ColumnSpace())
+    builder.WriteString(common.ColumnSpace())
+    builder.WriteString(fmt.Sprintf("INSERT INTO %s (%s)", tableName, columns))
+    builder.WriteString(common.Newline())
+    builder.WriteString(common.ColumnSpace())
+    builder.WriteString(common.ColumnSpace())
+    builder.WriteString("VALUES")
+    builder.WriteString(common.Newline())
+
+    builder.WriteString(common.ColumnSpace())
+    builder.WriteString(common.ColumnSpace())
+    builder.WriteString(`<foreach item="item" index="index" collection="{0}" open="" separator="," close="">`)
+    builder.WriteString(common.Newline())
+
+    builder.WriteString(common.ColumnSpace())
+    builder.WriteString(common.ColumnSpace())
+    builder.WriteString(common.ColumnSpace())
+    builder.WriteString("(")
+    for i := range model {
+        builder.WriteString(fmt.Sprintf("#{item.%s}", common.Column2DynamicName(modelName, model[i].ColumnName)))
+        if i < len(model)-1 {
+            builder.WriteString(",")
+        }
+    }
+    builder.WriteString(")")
+    builder.WriteString(common.Newline())
+
+    builder.WriteString(common.ColumnSpace())
+    builder.WriteString(common.ColumnSpace())
+    builder.WriteString(`</foreach>`)
+    builder.WriteString(common.Newline())
+
+    builder.WriteString(common.ColumnSpace())
+    builder.WriteString("</insert>")
+    builder.WriteString(common.Newline())
+    builder.WriteString(common.Newline())
+    //insert end
+
     //update
     builder.WriteString(common.ColumnSpace())
     builder.WriteString(fmt.Sprintf("<update id=\"update%s\">", modelName))

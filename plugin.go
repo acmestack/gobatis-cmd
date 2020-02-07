@@ -7,92 +7,93 @@
 package main
 
 import (
-    "bytes"
-    "encoding/json"
-    "errors"
-    "fmt"
-    "github.com/xfali/gobatis-cmd/common"
-    mio "github.com/xfali/gobatis-cmd/io"
-    "io"
-    "os/exec"
-    "path/filepath"
-    "strings"
+	"bytes"
+	"encoding/json"
+	"errors"
+	"fmt"
+	"github.com/xfali/gobatis-cmd/common"
+	mio "github.com/xfali/gobatis-cmd/io"
+	"io"
+	"os/exec"
+	"path/filepath"
+	"strings"
 )
 
 func RunPlugin(config Config, tableName string, model []common.ModelInfo) error {
-    if config.Plugin == "" {
-        return nil
-    }
-    b, e := ExecPluginMethod(config.Plugin, common.OutPutSuffixMethod, nil)
-    if e != nil {
-        return e
-    }
+	if config.Plugin == "" {
+		return nil
+	}
+	b, e := ExecPluginMethod(config.Plugin, common.OutPutSuffixMethod, nil)
+	if e != nil {
+		return e
+	}
 
-    info := common.GenerateInfo{
-        Table:   tableName,
-        Package: config.PackageName,
-        Models:  model,
-    }
-    d, _ := json.Marshal(info)
-    gendata, errGen := ExecPluginMethod(config.Plugin, common.GenerateMethod, d)
-    if errGen != nil {
-        return errGen
-    }
+	info := common.GenerateInfo{
+		Driver:  config.Driver,
+		Table:   tableName,
+		Package: config.PackageName,
+		Models:  model,
+	}
+	d, _ := json.Marshal(info)
+	gendata, errGen := ExecPluginMethod(config.Plugin, common.GenerateMethod, d)
+	if errGen != nil {
+		return errGen
+	}
 
-    outputDir := config.Path
-    if !mio.IsPathExists(outputDir) {
-        mio.Mkdir(outputDir)
-    }
-    output := strings.ToLower(tableName) + strings.TrimSpace(string(b))
-    outputFile, err := mio.OpenAppend(filepath.Join(outputDir, output))
-    if err == nil {
-        defer outputFile.Close()
-        return mio.Write(outputFile, gendata)
-    }
-    return nil
+	outputDir := config.Path
+	if !mio.IsPathExists(outputDir) {
+		mio.Mkdir(outputDir)
+	}
+	output := strings.ToLower(tableName) + strings.TrimSpace(string(b))
+	outputFile, err := mio.OpenAppend(filepath.Join(outputDir, output))
+	if err == nil {
+		defer outputFile.Close()
+		return mio.Write(outputFile, gendata)
+	}
+	return nil
 }
 
 func ExecPluginMethod(path string, method string, data []byte) ([]byte, error) {
-    args  := []string{"-" + common.MethodFlag, method}
+	args := []string{"-" + common.MethodFlag, method}
 
-    cmd := exec.Command(path, args...)
-    if cmd == nil {
-        return nil, errors.New("exec plugin failed")
-    }
+	cmd := exec.Command(path, args...)
+	if cmd == nil {
+		return nil, errors.New("exec plugin failed")
+	}
 
-    stdout, err := cmd.StdoutPipe()
-    if err != nil {
-        return nil, err
-    }
+	stdout, err := cmd.StdoutPipe()
+	if err != nil {
+		return nil, err
+	}
 
-    if data != nil {
-        stdin, err := cmd.StdinPipe()
-        if err != nil {
-            return nil, err
-        }
-        stdin.Write(data)
-        stdin.Write([]byte{byte('\n')})
-    }
-    err = cmd.Start()
-    if err != nil {
-        return nil, err
-    }
+	if data != nil {
+		stdin, err := cmd.StdinPipe()
+		if err != nil {
+			return nil, err
+		}
+		stdin.Write(data)
+		stdin.Write([]byte{byte('\n')})
+	}
+	err = cmd.Start()
+	if err != nil {
+		return nil, err
+	}
 
-    buf := bytes.NewBuffer(nil)
-    n, errR := io.Copy(buf, stdout)
-    fmt.Println(n)
-    if errR != nil {
-        return nil, errR
-    }
+	buf := bytes.NewBuffer(nil)
+	n, errR := io.Copy(buf, stdout)
+	fmt.Println(n)
+	if errR != nil {
+		return nil, errR
+	}
 
-    errW := cmd.Wait()
-    if errW != nil {
-        return nil, errW
-    }
+	errW := cmd.Wait()
+	if errW != nil {
+		return nil, errW
+	}
 
-    code := cmd.ProcessState.ExitCode()
-    if code != 0 {
-        return nil, errors.New("exec plugin exit not 0")
-    }
-    return buf.Bytes(), nil
+	code := cmd.ProcessState.ExitCode()
+	if code != 0 {
+		return nil, errors.New("exec plugin exit not 0")
+	}
+	return buf.Bytes(), nil
 }

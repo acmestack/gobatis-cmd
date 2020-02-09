@@ -76,6 +76,28 @@ func buildTmplMapper(builder *strings.Builder, config Config, tableName string, 
     builder.WriteString(common.Newline())
     builder.WriteString(common.Newline())
 
+    //insertBatch
+    builder.WriteString(fmt.Sprintf(`{{define "insertBatch%s"}}`, modelName))
+    builder.WriteString(common.Newline())
+
+    builder.WriteString(`{{$size := len . | add -1}}`)
+    builder.WriteString(common.Newline())
+
+    builder.WriteString(fmt.Sprintf(`INSERT INTO %s(%s)`, tableName, columns))
+    builder.WriteString(common.Newline())
+
+    builder.WriteString("VALUES {{range $i, $v := .}}")
+    builder.WriteString(common.Newline())
+
+    builder.WriteString(genTmplRangeValues(modelName, model))
+
+    builder.WriteString(`{{end}}`)
+    builder.WriteString(common.Newline())
+
+    builder.WriteString(`{{end}}`)
+    builder.WriteString(common.Newline())
+    builder.WriteString(common.Newline())
+
     //update
     builder.WriteString(fmt.Sprintf(`{{define "update%s"}}`, modelName))
     builder.WriteString(common.Newline())
@@ -167,6 +189,29 @@ func genTmplValues(modelName string, model []common.ModelInfo) string {
         }
     }
 
+    return builder.String()
+}
+
+func genTmplRangeValues(modelName string, model []common.ModelInfo) string {
+    builder := strings.Builder{}
+
+    builder.WriteString(`(`)
+    size := len(model)
+    for i := range model {
+        if sqlType2GoMap[model[i].DataType] == "string" {
+            builder.WriteString(fmt.Sprintf("'{{$v.%s}}'", common.Column2Modelfield(model[i].ColumnName)))
+        } else {
+            builder.WriteString(fmt.Sprintf("{{$v.%s}}", common.Column2Modelfield(model[i].ColumnName)))
+        }
+
+        size--
+        if size > 0 {
+            builder.WriteString(", ")
+        }
+    }
+
+    builder.WriteString(`){{if lt $i $size}},{{end}}`)
+    builder.WriteString(common.Newline())
     return builder.String()
 }
 

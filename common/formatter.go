@@ -5,25 +5,35 @@
 
 package common
 
-type KeyWordFormatter func(string) string
+const (
+	MysqlKeywordEscapeChar    = "`"
+	PostgresKeywordEscapeChar = `"`
 
-var KwFormatter = MysqlKeyWordFormatter
-var kwFormatterMap = map[string]KeyWordFormatter{
-	"mysql":    MysqlKeyWordFormatter,
-	"postgres": PostgresKeyWordFormatter,
+	MysqlEscapeKeywordEscapeChar    = "`"
+	PostgresEscapeKeywordEscapeChar = `\"`
+)
+
+var KeywordEscapeChar = MysqlKeywordEscapeChar
+var EscapeKeywordEscapeChar = MysqlEscapeKeywordEscapeChar
+
+type KeywordFormatter func(string) string
+
+var KwFormatter = CommonKeywordFormatter
+
+func CommonKeywordFormatter(src string) string {
+	return KeywordEscapeChar + src + KeywordEscapeChar
 }
 
-func MysqlKeyWordFormatter(src string) string {
-	return "`" + src + "`"
+func CommonEscapeKeywordFormatter(src string) string {
+	return EscapeKeywordEscapeChar + src + EscapeKeywordEscapeChar
 }
 
-func PostgresKeyWordFormatter(src string) string {
-	return `"` + src + `"`
-}
-
-func SelectKeyWordFormatter(driver string) {
-	v := kwFormatterMap[driver]
-	if v != nil {
-		KwFormatter = v
+func SelectKeywordFormatter(driver string) {
+	if driver == "postgres" {
+		KeywordEscapeChar = PostgresKeywordEscapeChar
+		EscapeKeywordEscapeChar = PostgresEscapeKeywordEscapeChar
+	} else {
+		KeywordEscapeChar = MysqlKeywordEscapeChar
+		EscapeKeywordEscapeChar = MysqlEscapeKeywordEscapeChar
 	}
 }

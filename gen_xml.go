@@ -17,7 +17,9 @@ import (
 )
 
 func genXml(config Config, tableName string, model []common.ModelInfo) {
-    common.SelectKeywordFormatter(config.Driver)
+    if config.Keyword {
+        common.SelectKeywordFormatter(config.Driver)
+    }
     if config.MapperFile == "xml" {
         xmlDir := config.Path + "xml/"
         if !io.IsPathExists(xmlDir) {

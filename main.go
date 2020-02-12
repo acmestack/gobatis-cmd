@@ -24,6 +24,7 @@ type Config struct {
 	TagName     string
 	MapperFile  string
 	Plugin      string
+	Keyword     bool
 }
 
 func main() {
@@ -40,6 +41,7 @@ func main() {
 	tagName := flag.String("tag", "xfield", "the name of field tag,eg: xfield,json  xfield,json,yaml")
 	mapper := flag.String("mapper", "xml", "generate mapper file: xml | template | go")
 	plugin := flag.String("plugin", "", "path of plugin")
+	keyword := flag.Bool("keyword", false, "with Keyword escape")
 	flag.Parse()
 
 	db := buildinDrivers[*driver]
@@ -65,6 +67,7 @@ func main() {
 		TagName:     *tagName,
 		MapperFile:  *mapper,
 		Plugin:      *plugin,
+		Keyword:     *keyword,
 	}
 
 	if *tableName == "" {

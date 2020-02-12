@@ -129,12 +129,24 @@ func TestMode(t *testing.T) {
 }
 
 func TestXml(t *testing.T) {
+	t.Run("no keyword", func(t *testing.T) {
+		config := Config{
+			PackageName: "test_package",
+			Path:        "c:/tmp/",
+			TagName:     "xfield",
+			MapperFile:  "xml",
+		}
+		genXml(config, "test_table", *createModeInfo())
+	})
+
 	t.Run("mysql", func(t *testing.T) {
 		config := Config{
 			PackageName: "test_package",
 			Path:        "c:/tmp/",
 			TagName:     "xfield",
 			MapperFile:  "xml",
+			Driver:      "mysql",
+			Keyword:     true,
 		}
 		genXml(config, "test_table", *createModeInfo())
 	})
@@ -146,18 +158,43 @@ func TestXml(t *testing.T) {
 			TagName:     "xfield",
 			MapperFile:  "xml",
 			Driver:      "postgres",
+			Keyword:     true,
+		}
+		genXml(config, "test_table", *createModeInfo())
+	})
+
+	t.Run("sqlserver", func(t *testing.T) {
+		config := Config{
+			PackageName: "test_package",
+			Path:        "c:/tmp/",
+			TagName:     "xfield",
+			MapperFile:  "xml",
+			Driver:      "mssql",
+			Keyword:     true,
 		}
 		genXml(config, "test_table", *createModeInfo())
 	})
 }
 
 func TestTemplate(t *testing.T) {
+	t.Run("no keyword", func(t *testing.T) {
+		config := Config{
+			PackageName: "test_package",
+			Path:        "c:/tmp/",
+			TagName:     "xfield",
+			MapperFile:  "template",
+		}
+		genTemplate(config, "test_table", *createModeInfo())
+	})
+
 	t.Run("mysql", func(t *testing.T) {
 		config := Config{
 			PackageName: "test_package",
 			Path:        "c:/tmp/",
 			TagName:     "xfield",
 			MapperFile:  "template",
+			Driver:      "mysql",
+			Keyword:     true,
 		}
 		genTemplate(config, "test_table", *createModeInfo())
 	})
@@ -169,6 +206,19 @@ func TestTemplate(t *testing.T) {
 			TagName:     "xfield",
 			MapperFile:  "template",
 			Driver:      "postgres",
+			Keyword:     true,
+		}
+		genTemplate(config, "test_table", *createModeInfo())
+	})
+
+	t.Run("sqlserver", func(t *testing.T) {
+		config := Config{
+			PackageName: "test_package",
+			Path:        "c:/tmp/",
+			TagName:     "xfield",
+			MapperFile:  "template",
+			Driver:      "mssql",
+			Keyword:     true,
 		}
 		genTemplate(config, "test_table", *createModeInfo())
 	})

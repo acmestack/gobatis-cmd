@@ -6,34 +6,59 @@
 package common
 
 const (
-	MysqlKeywordEscapeChar    = "`"
-	PostgresKeywordEscapeChar = `"`
+	MysqlKeywordEscapeCharStart       = "`"
+	MysqlKeywordEscapeCharEnd         = "`"
+	MysqlEscapeKeywordEscapeCharStart = "`"
+	MysqlEscapeKeywordEscapeCharEnd   = "`"
 
-	MysqlEscapeKeywordEscapeChar    = "`"
-	PostgresEscapeKeywordEscapeChar = `\"`
+	PostgresKeywordEscapeCharStart       = `"`
+	PostgresKeywordEscapeCharEnd         = `"`
+	PostgresEscapeKeywordEscapeCharStart = `\"`
+	PostgresEscapeKeywordEscapeCharEnd   = `\"`
+
+	SqlServerKeywordEscapeCharStart       = `[`
+	SqlServerKeywordEscapeCharEnd         = `]`
+	SqlServerEscapeKeywordEscapeCharStart = `[`
+	SqlServerEscapeKeywordEscapeCharEnd   = `]`
+
+	DummyKeywordEscapeCharStart       = ""
+	DummyKeywordEscapeCharEnd         = ""
+	DummyEscapeKeywordEscapeCharStart = ""
+	DummyEscapeKeywordEscapeCharEnd   = ""
 )
 
-var KeywordEscapeChar = MysqlKeywordEscapeChar
-var EscapeKeywordEscapeChar = MysqlEscapeKeywordEscapeChar
+var KeywordEscapeCharStart = DummyKeywordEscapeCharStart
+var KeywordEscapeCharEnd = DummyKeywordEscapeCharEnd
+var EscapeKeywordEscapeCharStart = DummyEscapeKeywordEscapeCharStart
+var EscapeKeywordEscapeCharEnd = DummyEscapeKeywordEscapeCharEnd
 
 type KeywordFormatter func(string) string
 
 var KwFormatter = CommonKeywordFormatter
 
 func CommonKeywordFormatter(src string) string {
-	return KeywordEscapeChar + src + KeywordEscapeChar
+	return KeywordEscapeCharStart + src + KeywordEscapeCharEnd
 }
 
 func CommonEscapeKeywordFormatter(src string) string {
-	return EscapeKeywordEscapeChar + src + EscapeKeywordEscapeChar
+	return EscapeKeywordEscapeCharStart + src + EscapeKeywordEscapeCharEnd
 }
 
 func SelectKeywordFormatter(driver string) {
-	if driver == "postgres" {
-		KeywordEscapeChar = PostgresKeywordEscapeChar
-		EscapeKeywordEscapeChar = PostgresEscapeKeywordEscapeChar
+	if driver == "mysql" {
+		KeywordEscapeCharStart = MysqlKeywordEscapeCharStart
+		KeywordEscapeCharEnd = MysqlKeywordEscapeCharEnd
+		EscapeKeywordEscapeCharStart = MysqlEscapeKeywordEscapeCharStart
+		EscapeKeywordEscapeCharEnd = MysqlEscapeKeywordEscapeCharEnd
+	} else if driver == "mssql" || driver == "adodb" {
+		KeywordEscapeCharStart = SqlServerKeywordEscapeCharStart
+		KeywordEscapeCharEnd = SqlServerKeywordEscapeCharEnd
+		EscapeKeywordEscapeCharStart = SqlServerEscapeKeywordEscapeCharStart
+		EscapeKeywordEscapeCharEnd = SqlServerEscapeKeywordEscapeCharEnd
 	} else {
-		KeywordEscapeChar = MysqlKeywordEscapeChar
-		EscapeKeywordEscapeChar = MysqlEscapeKeywordEscapeChar
+		KeywordEscapeCharStart = PostgresKeywordEscapeCharStart
+		KeywordEscapeCharEnd = PostgresKeywordEscapeCharEnd
+		EscapeKeywordEscapeCharStart = PostgresEscapeKeywordEscapeCharStart
+		EscapeKeywordEscapeCharEnd = PostgresEscapeKeywordEscapeCharEnd
 	}
 }

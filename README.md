@@ -38,6 +38,8 @@ gobatis-cmd -driver=mysql -host=localhost -port=3306 -user=test -pw=test -db=tes
         数据库的用户名
   -mapper string
         mapper文件类型: xml | template | go （默认xml）
+  -keyword bool
+        是否自动添加转义符，默认false，如果为true则会根据driver名称辨识添加
 ```
 
 会在当前目录下生成1个目录及3个文件，分别为：

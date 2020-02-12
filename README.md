@@ -193,30 +193,40 @@ func DeleteTestTable(sess *gobatis.Session, model TestTable) (int64, error) {
 当参数mapper=template时会生成go template文件，文件为： ${PATH}/template/${表名}_mapper.tmpl
 
 例子：
-
 ```cassandraql
 {{define "selectTestTable"}}
-{{$COLUMNS := "`id`,`username`,`password`,`update_time`"}}
-SELECT {{$COLUMNS}} FROM `test_table`
-{{where (ne .Id 0) "AND" "id" .Id "" | where (ne .Username "") "AND" "username" .Username | where (ne .Password "") "AND" "password" .Password | where (ne .UpdateTime ) "AND" "update_time" .UpdateTime}}
+SELECT "id","username","password","createtime" FROM "test_table"
+{{where .Id "AND" "\"id\" = " (arg .Id) "" | where .Username "AND" "\"username\" = " (arg .Username) | where .Password "AND" "\"password\" = " (arg .Password) | where .Createtime "AND" "\"createtime\" = " (arg .Createtime)}}
+{{end}}
+
+{{define "selectTestTableCount"}}
+SELECT COUNT(*) FROM "test_table"
+{{where .Id "AND" "\"id\" = " (arg .Id) "" | where .Username "AND" "\"username\" = " (arg .Username) | where .Password "AND" "\"password\" = " (arg .Password) | where .Createtime "AND" "\"createtime\" = " (arg .Createtime)}}
 {{end}}
 
 {{define "insertTestTable"}}
-{{$COLUMNS := "`id`,`username`,`password`,`update_time`"}}
-INSERT INTO `test_table`({{$COLUMNS}})
+INSERT INTO "test_table"("id","username","password","createtime")
 VALUES(
-{{.Id}}, '{{.Username}}', '{{.Password}}', {{.UpdateTime}})
+{{arg .Id}}, {{arg .Username}}, {{arg .Password}}, {{arg .Createtime}})
+{{end}}
+
+{{define "insertBatchTestTable"}}
+{{$size := len . | add -1}}
+INSERT INTO "test_table"("id","username","password","createtime")
+VALUES {{range $i, $v := .}}
+({{arg $v.Id}}, {{arg $v.Username}}, {{arg $v.Password}}, {{arg $v.Createtime}}){{if lt $i $size}},{{end}}
+{{end}}
 {{end}}
 
 {{define "updateTestTable"}}
-UPDATE `test_table`
-{{set (ne .Id 0) "id" .Id "" | set (ne .Username "") "username" .Username | set (ne .Password "") "password" .Password | set (ne .UpdateTime ) "update_time" .UpdateTime}}
-{{where (ne .Id 0) "AND" "id" .Id ""}}
+UPDATE "test_table"
+{{set .Id "\"id\" = " (arg .Id) "" | set .Username "\"username\" = " (arg .Username) | set .Password "\"password\" = " (arg .Password) | set .Createtime "\"createtime\" = " (arg .Createtime)}}
+{{where .Id "AND" "\"id\" = " (arg .Id) ""}}
 {{end}}
 
 {{define "deleteTestTable"}}
-DELETE FROM `test_table`
-{{where (ne .Id 0) "AND" "id" .Id "" | where (ne .Username "") "AND" "username" .Username | where (ne .Password "") "AND" "password" .Password | where (ne .UpdateTime ) "AND" "update_time" .UpdateTime}}
+DELETE FROM "test_table"
+{{where .Id "AND" "\"id\" = " (arg .Id) "" | where .Username "AND" "\"username\" = " (arg .Username) | where .Password "AND" "\"password\" = " (arg .Password) | where .Createtime "AND" "\"createtime\" = " (arg .Createtime)}}
 {{end}}
 ```
 

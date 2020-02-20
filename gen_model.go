@@ -54,11 +54,19 @@ func genModel(config Config, tableName string, model []common.ModelInfo) {
             builder.WriteString(common.Newline())
             builder.WriteString(common.Newline())
 
+            builder.WriteString("import (")
+            builder.WriteString(common.Newline())
+            builder.WriteString(common.ColumnSpace())
+            builder.WriteString(`"github.com/xfali/gobatis"`)
+            builder.WriteString(common.Newline())
             if findTime(model) {
-                builder.WriteString("import \"time\"")
-                builder.WriteString(common.Newline())
+                builder.WriteString(common.ColumnSpace())
+                builder.WriteString(`"time"`)
                 builder.WriteString(common.Newline())
             }
+            builder.WriteString(")")
+            builder.WriteString(common.Newline())
+            builder.WriteString(common.Newline())
         }
 
         builder.WriteString("type ")
@@ -81,6 +89,57 @@ func genModel(config Config, tableName string, model []common.ModelInfo) {
             builder.WriteString(common.Newline())
         }
         builder.WriteString("}")
+        builder.WriteString(common.Newline())
+        builder.WriteString(common.Newline())
+
+        //select
+        builder.WriteString(fmt.Sprintf("func (m *%s) Select(sess *gobatis.Session) ([]%s, error) {", modelName, modelName))
+        builder.WriteString(common.Newline())
+        builder.WriteString(common.ColumnSpace())
+        builder.WriteString(fmt.Sprintf("return Select%s(sess, *m)", modelName))
+        builder.WriteString(common.Newline())
+        builder.WriteString("}")
+        builder.WriteString(common.Newline())
+        builder.WriteString(common.Newline())
+
+        //count
+        builder.WriteString(fmt.Sprintf("func (m *%s) Count(sess *gobatis.Session) (int64, error) {", modelName))
+        builder.WriteString(common.Newline())
+        builder.WriteString(common.ColumnSpace())
+        builder.WriteString(fmt.Sprintf("return Select%sCount(sess, *m)", modelName))
+        builder.WriteString(common.Newline())
+        builder.WriteString("}")
+        builder.WriteString(common.Newline())
+        builder.WriteString(common.Newline())
+
+        //insert
+        builder.WriteString(fmt.Sprintf("func (m *%s) Insert(sess *gobatis.Session) (int64, int64, error) {", modelName))
+        builder.WriteString(common.Newline())
+        builder.WriteString(common.ColumnSpace())
+        builder.WriteString(fmt.Sprintf("return Insert%s(sess, *m)", modelName))
+        builder.WriteString(common.Newline())
+        builder.WriteString("}")
+        builder.WriteString(common.Newline())
+        builder.WriteString(common.Newline())
+
+        //update
+        builder.WriteString(fmt.Sprintf("func (m *%s) Update(sess *gobatis.Session) (int64, error) {", modelName))
+        builder.WriteString(common.Newline())
+        builder.WriteString(common.ColumnSpace())
+        builder.WriteString(fmt.Sprintf("return Update%s(sess, *m)", modelName))
+        builder.WriteString(common.Newline())
+        builder.WriteString("}")
+        builder.WriteString(common.Newline())
+        builder.WriteString(common.Newline())
+
+        //delete
+        builder.WriteString(fmt.Sprintf("func (m *%s) Delete(sess *gobatis.Session) (int64, error) {", modelName))
+        builder.WriteString(common.Newline())
+        builder.WriteString(common.ColumnSpace())
+        builder.WriteString(fmt.Sprintf("return Delete%s(sess, *m)", modelName))
+        builder.WriteString(common.Newline())
+        builder.WriteString("}")
+        builder.WriteString(common.Newline())
         builder.WriteString(common.Newline())
 
         io.Write(modelFile, []byte(builder.String()))

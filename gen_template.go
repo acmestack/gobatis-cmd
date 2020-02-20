@@ -45,6 +45,15 @@ func buildTmplMapper(builder *strings.Builder, config Config, tableName string, 
 	builder.WriteString(common.Newline())
 	builder.WriteString(common.Newline())
 
+	//namespace
+	builder.WriteString(`{{define "namespace"}}`)
+
+	builder.WriteString(config.Namespace)
+
+	builder.WriteString(`{{end}}`)
+	builder.WriteString(common.Newline())
+	builder.WriteString(common.Newline())
+
 	//select
 	builder.WriteString(fmt.Sprintf(`{{define "select%s"}}`, modelName))
 	builder.WriteString(common.Newline())

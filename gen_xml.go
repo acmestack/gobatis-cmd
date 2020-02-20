@@ -3,7 +3,7 @@
  * All right reserved.
  * @author xiongfa.li
  * @version V1.0
- * Description: 
+ * Description:
  */
 
 package main
@@ -74,7 +74,7 @@ func buildMapper(builder *strings.Builder, config Config, tableName string, mode
     builder.WriteString(common.Newline())
     builder.WriteString(common.Newline())
 
-    builder.WriteString(fmt.Sprintf("<mapper namespace=\"%s.%s\">", config.PackageName, modelName))
+    builder.WriteString(fmt.Sprintf("<mapper namespace=\"%s\">", config.Namespace))
     builder.WriteString(common.Newline())
 
     builder.WriteString(common.ColumnSpace())

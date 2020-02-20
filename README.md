@@ -10,7 +10,7 @@ go get github.com/xfali/gobatis-cmd
 
 ## 使用
 ```
-gobatis-cmd -driver=mysql -host=localhost -port=3306 -user=test -pw=test -db=testdb -pkg=test_package -mapper=xml -path=.
+gobatis-cmd -driver=mysql -host=localhost -port=3306 -user=test -pw=test -db=testdb -pkg=test_package -mapper=xml -namespace=test -path=.
 ```
 
 ```
@@ -40,6 +40,8 @@ gobatis-cmd -driver=mysql -host=localhost -port=3306 -user=test -pw=test -db=tes
         mapper文件类型: xml | template | go （默认xml）
   -keyword bool
         是否自动添加转义符，默认false，如果为true则会根据driver名称辨识添加
+  -namespace string
+        添加namespace，避免同表名冲突，（默认为空）
 ```
 
 会在当前目录下生成1个目录及3个文件，分别为：
@@ -78,56 +80,64 @@ type TestTable struct {
 
 例子：
 ```
-<mapper namespace="test_package.TestTable">
-    <sql id="columns_id">`id`,`username`,`password`,`update_time`</sql>
+<mapper namespace="test">
+    <sql id="columns_id">id,username,password,createtime</sql>
 
     <select id="selectTestTable">
-        SELECT <include refid="columns_id"> </include> FROM `TEST_TABLE`
+        SELECT <include refid="columns_id"> </include> FROM test_table
         <where>
-            <if test="{TestTable.id} != nil and {TestTable.id} != 0">AND `id` = #{TestTable.id} </if>
-            <if test="{TestTable.username} != nil">AND `username` = #{TestTable.username} </if>
-            <if test="{TestTable.password} != nil">AND `password` = #{TestTable.password} </if>
-            <if test="{TestTable.update_time} != nil">AND `update_time` = #{TestTable.update_time} </if>
+            <if test="{TestTable.id} != nil and {TestTable.id} != 0">AND id = #{TestTable.id} </if>
+            <if test="{TestTable.username} != nil">AND username = #{TestTable.username} </if>
+            <if test="{TestTable.password} != nil">AND password = #{TestTable.password} </if>
+            <if test="{TestTable.createtime} != nil">AND createtime = #{TestTable.createtime} </if>
         </where>
     </select>
 
     <select id="selectTestTableCount">
-        SELECT COUNT(*) FROM `TEST_TABLE`
+        SELECT COUNT(*) FROM test_table
         <where>
-            <if test="{TestTable.id} != nil and {TestTable.id} != 0">AND `id` = #{TestTable.id} </if>
-            <if test="{TestTable.username} != nil">AND `username` = #{TestTable.username} </if>
-            <if test="{TestTable.password} != nil">AND `password` = #{TestTable.password} </if>
-            <if test="{TestTable.update_time} != nil">AND `update_time` = #{TestTable.update_time} </if>
+            <if test="{TestTable.id} != nil and {TestTable.id} != 0">AND id = #{TestTable.id} </if>
+            <if test="{TestTable.username} != nil">AND username = #{TestTable.username} </if>
+            <if test="{TestTable.password} != nil">AND password = #{TestTable.password} </if>
+            <if test="{TestTable.createtime} != nil">AND createtime = #{TestTable.createtime} </if>
         </where>
     </select>
 
     <insert id="insertTestTable">
-        INSERT INTO `TEST_TABLE` (`id`,`username`,`password`,`update_time`)
+        INSERT INTO test_table (id,username,password,createtime)
         VALUES(
         #{TestTable.id},
         #{TestTable.username},
         #{TestTable.password},
-        #{TestTable.update_time}
+        #{TestTable.createtime}
         )
     </insert>
 
+    <insert id="insertBatchTestTable">
+        INSERT INTO test_table (id,username,password,createtime)
+        VALUES
+        <foreach item="item" index="index" collection="{0}" open="" separator="," close="">
+            (#{item.TestTable.id},#{item.TestTable.username},#{item.TestTable.password},#{item.TestTable.createtime})
+        </foreach>
+    </insert>
+
     <update id="updateTestTable">
-        UPDATE `TEST_TABLE`
+        UPDATE test_table
         <set>
-            <if test="{TestTable.username} != nil"> `username` = #{TestTable.username} </if>
-            <if test="{TestTable.password} != nil"> `password` = #{TestTable.password} </if>
-            <if test="{TestTable.update_time} != nil"> `update_time` = #{TestTable.update_time} </if>
+            <if test="{TestTable.username} != nil"> username = #{TestTable.username} </if>
+            <if test="{TestTable.password} != nil"> password = #{TestTable.password} </if>
+            <if test="{TestTable.createtime} != nil"> createtime = #{TestTable.createtime} </if>
         </set>
-        WHERE `id` = #{TestTable.id}
+        WHERE id = #{TestTable.id}
     </update>
 
     <delete id="deleteTestTable">
-        DELETE FROM `TEST_TABLE`
+        DELETE FROM test_table
         <where>
-            <if test="{TestTable.id} != nil and {TestTable.id} != 0">AND `id` = #{TestTable.id} </if>
-            <if test="{TestTable.username} != nil">AND `username` = #{TestTable.username} </if>
-            <if test="{TestTable.password} != nil">AND `password` = #{TestTable.password} </if>
-            <if test="{TestTable.update_time} != nil">AND `update_time` = #{TestTable.update_time} </if>
+            <if test="{TestTable.id} != nil and {TestTable.id} != 0">AND id = #{TestTable.id} </if>
+            <if test="{TestTable.username} != nil">AND username = #{TestTable.username} </if>
+            <if test="{TestTable.password} != nil">AND password = #{TestTable.password} </if>
+            <if test="{TestTable.createtime} != nil">AND createtime = #{TestTable.createtime} </if>
         </where>
     </delete>
 </mapper>
@@ -146,7 +156,7 @@ type TestTable struct {
 
 例子：
 ```
-package test_package
+package test
 
 import (
     "github.com/xfali/gobatis"
@@ -155,24 +165,32 @@ import (
 func init() {
     modelV := TestTable{}
     gobatis.RegisterModel(&modelV)
-    gobatis.RegisterMapperFile("c:/tmp/xml/test_table_mapper.xml")
+    gobatis.RegisterTemplateFile("./template/test_table_mapper.tmpl")
 }
 
 func SelectTestTable(sess *gobatis.Session, model TestTable) ([]TestTable, error) {
     var dataList []TestTable
-    err := sess.Select("selectTestTable").Param(model).Result(&dataList)
+    err := sess.Select("test.selectTestTable").Param(model).Result(&dataList)
     return dataList, err
 }
 
 func SelectTestTableCount(sess *gobatis.Session, model TestTable) (int64, error) {
     var ret int64
-    err := sess.Select("selectTestTableCount").Param(model).Result(&ret)
+    err := sess.Select("test.selectTestTableCount").Param(model).Result(&ret)
     return ret, err
 }
 
 func InsertTestTable(sess *gobatis.Session, model TestTable) (int64, int64, error) {
     var ret int64
-    runner := sess.Insert("insertTestTable").Param(model)
+    runner := sess.Insert("test.insertTestTable").Param(model)
+    err := runner.Result(&ret)
+    id := runner.LastInsertId()
+    return ret, id, err
+}
+
+func InsertBatchTestTable(sess *gobatis.Session, models []TestTable) (int64, int64, error) {
+    var ret int64
+    runner := sess.Insert("test.insertBatchTestTable").Param(models)
     err := runner.Result(&ret)
     id := runner.LastInsertId()
     return ret, id, err
@@ -180,13 +198,13 @@ func InsertTestTable(sess *gobatis.Session, model TestTable) (int64, int64, erro
 
 func UpdateTestTable(sess *gobatis.Session, model TestTable) (int64, error) {
     var ret int64
-    err := sess.Update("updateTestTable").Param(model).Result(&ret)
+    err := sess.Update("test.updateTestTable").Param(model).Result(&ret)
     return ret, err
 }
 
 func DeleteTestTable(sess *gobatis.Session, model TestTable) (int64, error) {
     var ret int64
-    err := sess.Delete("deleteTestTable").Param(model).Result(&ret)
+    err := sess.Delete("test.deleteTestTable").Param(model).Result(&ret)
     return ret, err
 }
 ```
@@ -196,39 +214,41 @@ func DeleteTestTable(sess *gobatis.Session, model TestTable) (int64, error) {
 
 例子：
 ```cassandraql
+{{define "namespace"}}test{{end}}
+
 {{define "selectTestTable"}}
-SELECT "id","username","password","createtime" FROM "test_table"
-{{where .Id "AND" "\"id\" = " (arg .Id) "" | where .Username "AND" "\"username\" = " (arg .Username) | where .Password "AND" "\"password\" = " (arg .Password) | where .Createtime "AND" "\"createtime\" = " (arg .Createtime)}}
+SELECT id,username,password,createtime FROM test_table
+{{where .Id "AND" "id = " (arg .Id) "" | where .Username "AND" "username = " (arg .Username) | where .Password "AND" "password = " (arg .Password) | where .Createtime "AND" "createtime = " (arg .Createtime)}}
 {{end}}
 
 {{define "selectTestTableCount"}}
-SELECT COUNT(*) FROM "test_table"
-{{where .Id "AND" "\"id\" = " (arg .Id) "" | where .Username "AND" "\"username\" = " (arg .Username) | where .Password "AND" "\"password\" = " (arg .Password) | where .Createtime "AND" "\"createtime\" = " (arg .Createtime)}}
+SELECT COUNT(*) FROM test_table
+{{where .Id "AND" "id = " (arg .Id) "" | where .Username "AND" "username = " (arg .Username) | where .Password "AND" "password = " (arg .Password) | where .Createtime "AND" "createtime = " (arg .Createtime)}}
 {{end}}
 
 {{define "insertTestTable"}}
-INSERT INTO "test_table"("id","username","password","createtime")
+INSERT INTO test_table(id,username,password,createtime)
 VALUES(
 {{arg .Id}}, {{arg .Username}}, {{arg .Password}}, {{arg .Createtime}})
 {{end}}
 
 {{define "insertBatchTestTable"}}
 {{$size := len . | add -1}}
-INSERT INTO "test_table"("id","username","password","createtime")
+INSERT INTO test_table(id,username,password,createtime)
 VALUES {{range $i, $v := .}}
 ({{arg $v.Id}}, {{arg $v.Username}}, {{arg $v.Password}}, {{arg $v.Createtime}}){{if lt $i $size}},{{end}}
 {{end}}
 {{end}}
 
 {{define "updateTestTable"}}
-UPDATE "test_table"
-{{set .Id "\"id\" = " (arg .Id) "" | set .Username "\"username\" = " (arg .Username) | set .Password "\"password\" = " (arg .Password) | set .Createtime "\"createtime\" = " (arg .Createtime)}}
-{{where .Id "AND" "\"id\" = " (arg .Id) ""}}
+UPDATE test_table
+{{set .Id "id = " (arg .Id) "" | set .Username "username = " (arg .Username) | set .Password "password = " (arg .Password) | set .Createtime "createtime = " (arg .Createtime)}}
+{{where .Id "AND" "id = " (arg .Id) ""}}
 {{end}}
 
 {{define "deleteTestTable"}}
-DELETE FROM "test_table"
-{{where .Id "AND" "\"id\" = " (arg .Id) "" | where .Username "AND" "\"username\" = " (arg .Username) | where .Password "AND" "\"password\" = " (arg .Password) | where .Createtime "AND" "\"createtime\" = " (arg .Createtime)}}
+DELETE FROM test_table
+{{where .Id "AND" "id = " (arg .Id) "" | where .Username "AND" "username = " (arg .Username) | where .Password "AND" "password = " (arg .Password) | where .Createtime "AND" "createtime = " (arg .Createtime)}}
 {{end}}
 ```
 

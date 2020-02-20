@@ -20,6 +20,7 @@ type Config struct {
 	Driver      string
 	Path        string
 	PackageName string
+	Namespace   string
 	ModelFile   string
 	TagName     string
 	MapperFile  string
@@ -29,7 +30,7 @@ type Config struct {
 
 func main() {
 	driver := flag.String("driver", "mysql", "driver of db")
-	packageName := flag.String("pkg", "xfali/gobatis/default", "Set the package name of .go file")
+	packageName := flag.String("pkg", "xfali.gobatis.default", "Set the package name of .go file")
 	dbName := flag.String("db", "", "the name of db instance used in model files")
 	tableName := flag.String("table", "", "the name of table to be generated")
 	host := flag.String("host", "localhost", "host of db")
@@ -42,6 +43,7 @@ func main() {
 	mapper := flag.String("mapper", "xml", "generate mapper file: xml | template | go")
 	plugin := flag.String("plugin", "", "path of plugin")
 	keyword := flag.Bool("keyword", false, "with Keyword escape")
+	namespace := flag.String("namespace", "", "namespace")
 	flag.Parse()
 
 	db := buildinDrivers[*driver]
@@ -63,6 +65,7 @@ func main() {
 		Driver:      *driver,
 		Path:        root,
 		PackageName: *packageName,
+		Namespace:   *namespace,
 		ModelFile:   *modelfile,
 		TagName:     *tagName,
 		MapperFile:  *mapper,
@@ -77,28 +80,10 @@ func main() {
 			os.Exit(-2)
 		}
 		for _, v := range tables {
-			models, err := db.QueryTableInfo(*dbName, v)
-			if err != nil {
-				log.Print(err)
-				os.Exit(-3)
-			}
-			err = generate(config, models, v)
-			if err != nil {
-				log.Print(err)
-				os.Exit(-3)
-			}
+			genOneTable(config, db, *dbName, v)
 		}
 	} else {
-		models, err := db.QueryTableInfo(*dbName, *tableName)
-		if err != nil {
-			log.Print(err)
-			os.Exit(-3)
-		}
-		err2 := generate(config, models, *tableName)
-		if err2 != nil {
-			log.Print(err2)
-			os.Exit(-2)
-		}
+		genOneTable(config, db, *dbName, *tableName)
 	}
 	os.Exit(0)
 }

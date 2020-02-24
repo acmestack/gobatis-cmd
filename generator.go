@@ -21,11 +21,11 @@ func genOneTable(config Config, db common.DBDriver, dbName, table string) {
         log.Print(err)
         os.Exit(-3)
     }
-    //conf := config
-    //if conf.Namespace == "" {
-    //    conf.Namespace = config.PackageName + "." + common.TableName2ModelName(table)
-    //}
-    err2 := generate(config, models, table)
+    conf := config
+    if conf.Namespace == "" {
+       conf.Namespace = config.PackageName + "." + common.TableName2ModelName(table)
+    }
+    err2 := generate(conf, models, table)
     if err2 != nil {
         log.Print(err2)
         os.Exit(-2)

@@ -41,7 +41,7 @@ gobatis-cmd -driver=mysql -host=localhost -port=3306 -user=test -pw=test -db=tes
   -keyword bool
         是否自动添加转义符，默认false，如果为true则会根据driver名称辨识添加
   -namespace string
-        添加namespace，避免同表名冲突，（默认为空）
+        添加namespace，避免同表名冲突，（默认为空，如果为空，自动填充为packageName.ModelName）
 ```
 
 会在当前目录下生成1个目录及3个文件，分别为：

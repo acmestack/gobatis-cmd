@@ -29,6 +29,7 @@ type PostgresDB struct {
 var buildinDrivers = map[string]common.DBDriver{
 	"mysql":    &MysqlDB{},
 	"postgres": &PostgresDB{},
+	"sqlite":   &SqliteDB{},
 }
 
 func (db *MysqlDB) Open(driver, info string) error {
@@ -165,6 +166,8 @@ func genDBInfo(driver, db, username, pw, host string, port int) string {
 		return fmt.Sprintf("%s:%s@tcp(%s:%d)/%s", username, pw, host, port, "information_schema")
 	} else if driver == "postgres" {
 		return fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=%s", host, port, username, pw, db, "disable")
+	} else if driver == "sqlite" {
+		return host
 	}
 	return ""
 }

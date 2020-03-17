@@ -8,7 +8,7 @@ package main
 import (
     "database/sql"
     "fmt"
-    _ "github.com/mattn/go-sqlite3"
+    //_ "github.com/mattn/go-sqlite3"
     "github.com/xfali/gobatis-cmd/common"
     "strings"
 )

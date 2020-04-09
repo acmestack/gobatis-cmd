@@ -12,6 +12,10 @@ import (
 	"testing"
 )
 
+func TestMysqlInfo(t *testing.T) {
+	t.Log(db2.GenDBInfo("mysql","testdb", "test", "test", "localhost", 3306))
+}
+
 func TestMysql(t *testing.T) {
 	db := db2.GetDriver("postgres")
 	if db == nil {

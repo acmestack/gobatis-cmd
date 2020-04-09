@@ -1,0 +1,17 @@
+{
+  "driver": "mysql",
+  "path": ".",
+  "package": "test",
+  "namespace": "test",
+  "modelFile": "test_model.go",
+  "tagName": "xfield",
+  "mapperFile": "xml",
+  "plugin": "",
+  "keyword": false,
+  "tableName": "",
+  "dbName": "test_db",
+  "host": "localhost",
+  "port": 3306,
+  "user": "",
+  "password": ""
+}

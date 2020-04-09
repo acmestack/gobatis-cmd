@@ -10,23 +10,14 @@ package main
 
 import (
 	"flag"
-	"github.com/xfali/gobatis-cmd/io"
+	"github.com/xfali/gobatis-cmd/internal/pkg/db"
+	"github.com/xfali/gobatis-cmd/internal/pkg/generator"
+	"github.com/xfali/gobatis-cmd/pkg/config"
+	"github.com/xfali/gobatis-cmd/pkg/io"
 	"log"
 	"os"
 	"strings"
 )
-
-type Config struct {
-	Driver      string
-	Path        string
-	PackageName string
-	Namespace   string
-	ModelFile   string
-	TagName     string
-	MapperFile  string
-	Plugin      string
-	Keyword     bool
-}
 
 func main() {
 	driver := flag.String("driver", "mysql", "driver of db")
@@ -46,22 +37,22 @@ func main() {
 	namespace := flag.String("namespace", "", "namespace")
 	flag.Parse()
 
-	db := buildinDrivers[*driver]
-	if db == nil {
+	dbDriver := db.GetDriver(*driver)
+	if dbDriver == nil {
 		log.Print("not support driver: ", *driver)
 		os.Exit(-1)
 	}
 
-	err := db.Open(*driver, genDBInfo(*driver, *dbName, *username, *pw, *host, *port))
+	err := dbDriver.Open(*driver, db.GenDBInfo(*driver, *dbName, *username, *pw, *host, *port))
 	if err != nil {
 		log.Print(err)
 		os.Exit(-1)
 	}
-	defer db.Close()
+	defer dbDriver.Close()
 
 	root := formatPath(*path)
 
-	config := Config{
+	config := config.Config{
 		Driver:      *driver,
 		Path:        root,
 		PackageName: *packageName,
@@ -74,16 +65,16 @@ func main() {
 	}
 
 	if *tableName == "" {
-		tables, err2 := db.QueryTableNames(*dbName)
+		tables, err2 := dbDriver.QueryTableNames(*dbName)
 		if err2 != nil {
 			log.Print(err2)
 			os.Exit(-2)
 		}
 		for _, v := range tables {
-			genOneTable(config, db, *dbName, v)
+			generator.GenOneTable(config, dbDriver, *dbName, v)
 		}
 	} else {
-		genOneTable(config, db, *dbName, *tableName)
+		generator.GenOneTable(config, dbDriver, *dbName, *tableName)
 	}
 	os.Exit(0)
 }

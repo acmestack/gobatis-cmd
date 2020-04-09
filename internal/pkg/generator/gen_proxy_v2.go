@@ -6,17 +6,18 @@
  * Description: 
  */
 
-package main
+package generator
 
 import (
     "fmt"
-    "github.com/xfali/gobatis-cmd/common"
-    "github.com/xfali/gobatis-cmd/io"
+    "github.com/xfali/gobatis-cmd/pkg/common"
+    "github.com/xfali/gobatis-cmd/pkg/config"
+    "github.com/xfali/gobatis-cmd/pkg/io"
     "strings"
     "time"
 )
 
-func genV2Proxy(config Config, tableName string, models []common.ModelInfo) {
+func GenV2Proxy(config config.Config, tableName string, models []common.ModelInfo) {
     mapperDir := config.Path
     if !io.IsPathExists(mapperDir) {
         io.Mkdir(mapperDir)

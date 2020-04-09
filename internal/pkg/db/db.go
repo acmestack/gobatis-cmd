@@ -6,14 +6,14 @@
  * Description:
  */
 
-package main
+package db
 
 import (
 	"database/sql"
 	"fmt"
 	_ "github.com/go-sql-driver/mysql"
 	_ "github.com/lib/pq"
-	"github.com/xfali/gobatis-cmd/common"
+	"github.com/xfali/gobatis-cmd/pkg/common"
 )
 
 type db sql.DB
@@ -30,6 +30,10 @@ var buildinDrivers = map[string]common.DBDriver{
 	"mysql":    &MysqlDB{},
 	"postgres": &PostgresDB{},
 	"sqlite":   &SqliteDB{},
+}
+
+func GetDriver(name string) common.DBDriver {
+	return buildinDrivers[name]
 }
 
 func (db *MysqlDB) Open(driver, info string) error {
@@ -161,7 +165,7 @@ func (db *PostgresDB) QueryTableNames(dbName string) ([]string, error) {
 	return ret, nil
 }
 
-func genDBInfo(driver, db, username, pw, host string, port int) string {
+func GenDBInfo(driver, db, username, pw, host string, port int) string {
 	if driver == "mysql" {
 		return fmt.Sprintf("%s:%s@tcp(%s:%d)/%s", username, pw, host, port, "information_schema")
 	} else if driver == "postgres" {

@@ -3,22 +3,23 @@
 // @version V1.0
 // Description: 
 
-package main
+package test
 
 import (
+	db2 "github.com/xfali/gobatis-cmd/internal/pkg/db"
 	"log"
 	"os"
 	"testing"
 )
 
 func TestMysql(t *testing.T) {
-	db := buildinDrivers["postgres"]
+	db := db2.GetDriver("postgres")
 	if db == nil {
 		log.Print("not support driver: ", "postgres")
 		os.Exit(-1)
 	}
 
-	err := db.Open("postgres", genDBInfo("postgres", "testdb", "test", "test", "localhost", 5432))
+	err := db.Open("postgres", db2.GenDBInfo("postgres", "testdb", "test", "test", "localhost", 5432))
 	if err != nil {
 		log.Print(err)
 		os.Exit(-1)

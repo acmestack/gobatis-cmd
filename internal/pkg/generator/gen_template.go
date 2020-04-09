@@ -6,17 +6,19 @@
  * Description:
  */
 
-package main
+package generator
 
 import (
 	"fmt"
-	"github.com/xfali/gobatis-cmd/common"
-	"github.com/xfali/gobatis-cmd/io"
+	"github.com/xfali/gobatis-cmd/internal/mapping"
+	"github.com/xfali/gobatis-cmd/pkg/common"
+	"github.com/xfali/gobatis-cmd/pkg/config"
+	"github.com/xfali/gobatis-cmd/pkg/io"
 	"strings"
 	"time"
 )
 
-func genTemplate(config Config, tableName string, model []common.ModelInfo) {
+func GenTemplate(config config.Config, tableName string, model []common.ModelInfo) {
 	if config.Keyword {
 		common.SelectKeywordFormatter(config.Driver)
 	}
@@ -34,7 +36,7 @@ func genTemplate(config Config, tableName string, model []common.ModelInfo) {
 	}
 }
 
-func buildTmplMapper(builder *strings.Builder, config Config, tableName string, model []common.ModelInfo) {
+func buildTmplMapper(builder *strings.Builder, config config.Config, tableName string, model []common.ModelInfo) {
 	modelName := common.TableName2ModelName(tableName)
 	columns := formatXmlColumns(tableName, model)
 	tableName = common.KwFormatter(tableName)
@@ -231,5 +233,5 @@ func genTmplRangeValues(modelName string, model []common.ModelInfo) string {
 }
 
 func getTmplCond(ctype string) string {
-	return sqlType2IfCondMap[ctype]
+	return mapping.SqlType2IfCondMap[ctype]
 }

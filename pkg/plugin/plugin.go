@@ -4,22 +4,23 @@
 // @version V1.0
 // Description: 
 
-package main
+package plugin
 
 import (
 	"bytes"
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/xfali/gobatis-cmd/common"
-	mio "github.com/xfali/gobatis-cmd/io"
+	"github.com/xfali/gobatis-cmd/pkg/common"
+	"github.com/xfali/gobatis-cmd/pkg/config"
+	mio "github.com/xfali/gobatis-cmd/pkg/io"
 	"io"
 	"os/exec"
 	"path/filepath"
 	"strings"
 )
 
-func RunPlugin(config Config, tableName string, model []common.ModelInfo) error {
+func RunPlugin(config config.Config, tableName string, model []common.ModelInfo) error {
 	if config.Plugin == "" {
 		return nil
 	}

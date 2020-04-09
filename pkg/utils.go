@@ -6,7 +6,7 @@
  * Description: 
  */
 
-package main
+package pkg
 
 import "strings"
 
@@ -18,20 +18,20 @@ func ColumnSpace() string {
     return "    "
 }
 
-func tableName2ModelName(tableName string) string {
-    return snake2camel(strings.ToLower(tableName))
+func TableName2ModelName(tableName string) string {
+    return Snake2camel(strings.ToLower(tableName))
 }
 
-func column2Modelfield(column string) string {
-    return snake2camel(strings.ToLower(column))
+func Column2Modelfield(column string) string {
+    return Snake2camel(strings.ToLower(column))
 }
 
-func column2DynamicName(tableName, column string) string {
+func Column2DynamicName(tableName, column string) string {
     return tableName + "." + column
 }
 
 // snake string, XxYy to xx_yy , XxYY to xx_yy
-func camel2snake(s string) string {
+func Camel2snake(s string) string {
     data := make([]byte, 0, len(s)*2)
     j := false
     num := len(s)
@@ -49,7 +49,7 @@ func camel2snake(s string) string {
 }
 
 // camel string, xx_yy to XxYy
-func snake2camel(s string) string {
+func Snake2camel(s string) string {
     data := make([]byte, 0, len(s))
     j := false
     k := false

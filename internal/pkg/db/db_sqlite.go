@@ -3,13 +3,13 @@
 // @version V1.0
 // Description: 
 
-package main
+package db
 
 import (
     "database/sql"
     "fmt"
     //_ "github.com/mattn/go-sqlite3"
-    "github.com/xfali/gobatis-cmd/common"
+    "github.com/xfali/gobatis-cmd/pkg/common"
     "strings"
 )
 

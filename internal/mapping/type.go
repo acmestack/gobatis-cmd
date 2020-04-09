@@ -6,9 +6,9 @@
  * Description:
  */
 
-package main
+package mapping
 
-var sqlType2GoMap = map[string]string{
+var SqlType2GoMap = map[string]string{
 	"int":                "int",
 	"integer":            "int",
 	"tinyint":            "int",
@@ -51,7 +51,7 @@ var sqlType2GoMap = map[string]string{
 	"float8":             "float64",
 }
 
-var sqlType2IfFormatMap = map[string]string{
+var SqlType2IfFormatMap = map[string]string{
 	"int":                "%s != nil and %s != 0",
 	"integer":            "%s != nil and %s != 0",
 	"tinyint":            "%s != nil and %s != 0",
@@ -95,7 +95,7 @@ var sqlType2IfFormatMap = map[string]string{
 	"float8":             "%s != nil and %s != 0",
 }
 
-var sqlType2IfCondMap = map[string]string{
+var SqlType2IfCondMap = map[string]string{
 	"int":                `0`,
 	"integer":            `0`,
 	"tinyint":            `0`,

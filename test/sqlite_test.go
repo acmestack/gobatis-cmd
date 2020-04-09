@@ -3,12 +3,15 @@
 // @version V1.0
 // Description: 
 
-package main
+package test
 
 import (
     "database/sql"
     _ "github.com/mattn/go-sqlite3"
-    "github.com/xfali/gobatis-cmd/common"
+    db2 "github.com/xfali/gobatis-cmd/internal/pkg/db"
+    "github.com/xfali/gobatis-cmd/internal/pkg/generator"
+    "github.com/xfali/gobatis-cmd/pkg/common"
+    "github.com/xfali/gobatis-cmd/pkg/config"
     "testing"
 )
 
@@ -38,7 +41,7 @@ func InitSqlite(t *testing.T) []common.ModelInfo {
         t.Fatal(err.Error())
     }
 
-    sqlDb := SqliteDB{}
+    sqlDb := db2.SqliteDB{}
     err2 := sqlDb.Open("sqlite3", "./test.db")
     if err2 != nil {
         t.Fatal(err2)
@@ -70,7 +73,7 @@ func TestSqlite(t *testing.T) {
 }
 
 func TestSqliteGenAll(t *testing.T) {
-    config := Config{
+    config := config.Config{
         PackageName: "mapper",
         Path:        "c:/tmp/",
         TagName:     "xfield",
@@ -78,7 +81,7 @@ func TestSqliteGenAll(t *testing.T) {
         //ModelFile:   "model.go",
     }
     m := InitSqlite(t)
-    genModel(config, "CITRON_META", m)
-    genXml(config, "CITRON_META", m)
-    genV2Proxy(config, "CITRON_META", m)
+    generator.GenModel(config, "CITRON_META", m)
+    generator.GenXml(config, "CITRON_META", m)
+    generator.GenV2Proxy(config, "CITRON_META", m)
 }

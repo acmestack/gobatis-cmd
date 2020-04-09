@@ -6,10 +6,13 @@
  * Description:
  */
 
-package main
+package test
 
 import (
-	"github.com/xfali/gobatis-cmd/common"
+	"github.com/xfali/gobatis-cmd/internal/pkg/generator"
+	"github.com/xfali/gobatis-cmd/pkg/common"
+	"github.com/xfali/gobatis-cmd/pkg/config"
+	"github.com/xfali/gobatis-cmd/pkg/plugin"
 	"testing"
 )
 
@@ -56,7 +59,7 @@ func createModeInfo() *[]common.ModelInfo {
 
 func TestMode(t *testing.T) {
 	t.Run("0", func(t *testing.T) {
-		config := Config{
+		config := config.Config{
 			PackageName: "test_package",
 			Path:        "c:/tmp/",
 			TagName:     "",
@@ -64,11 +67,11 @@ func TestMode(t *testing.T) {
 			ModelFile:   "model.go",
 		}
 
-		genModel(config, "test_table", *createModeInfo())
+		generator.GenModel(config, "test_table", *createModeInfo())
 	})
 
 	t.Run("1", func(t *testing.T) {
-		config := Config{
+		config := config.Config{
 			PackageName: "test_package",
 			Path:        "c:/tmp/",
 			TagName:     "xfield",
@@ -76,11 +79,11 @@ func TestMode(t *testing.T) {
 			ModelFile:   "model.go",
 		}
 
-		genModel(config, "test_table", *createModeInfo())
+		generator.GenModel(config, "test_table", *createModeInfo())
 	})
 
 	t.Run("2", func(t *testing.T) {
-		config := Config{
+		config := config.Config{
 			PackageName: "test_package",
 			Path:        "c:/tmp/",
 			TagName:     "xfield,json",
@@ -88,11 +91,11 @@ func TestMode(t *testing.T) {
 			ModelFile:   "model.go",
 		}
 
-		genModel(config, "test_table", *createModeInfo())
+		generator.GenModel(config, "test_table", *createModeInfo())
 	})
 
 	t.Run("2.1", func(t *testing.T) {
-		config := Config{
+		config := config.Config{
 			PackageName: "test_package",
 			Path:        "c:/tmp/",
 			TagName:     "xfield,json,",
@@ -100,11 +103,11 @@ func TestMode(t *testing.T) {
 			ModelFile:   "model.go",
 		}
 
-		genModel(config, "test_table", *createModeInfo())
+		generator.GenModel(config, "test_table", *createModeInfo())
 	})
 
 	t.Run("2.2", func(t *testing.T) {
-		config := Config{
+		config := config.Config{
 			PackageName: "test_package",
 			Path:        "c:/tmp/",
 			TagName:     "xml,json,",
@@ -112,11 +115,11 @@ func TestMode(t *testing.T) {
 			ModelFile:   "model.go",
 		}
 
-		genModel(config, "test_table", *createModeInfo())
+		generator.GenModel(config, "test_table", *createModeInfo())
 	})
 
 	t.Run("3", func(t *testing.T) {
-		config := Config{
+		config := config.Config{
 			PackageName: "test_package",
 			Path:        "c:/tmp/",
 			TagName:     "xfield,json,xml",
@@ -124,23 +127,23 @@ func TestMode(t *testing.T) {
 			ModelFile:   "model.go",
 		}
 
-		genModel(config, "test_table", *createModeInfo())
+		generator.GenModel(config, "test_table", *createModeInfo())
 	})
 }
 
 func TestXml(t *testing.T) {
 	t.Run("no keyword", func(t *testing.T) {
-		config := Config{
+		config := config.Config{
 			PackageName: "test_package",
 			Path:        "c:/tmp/",
 			TagName:     "xfield",
 			MapperFile:  "xml",
 		}
-		genXml(config, "test_table", *createModeInfo())
+		generator.GenXml(config, "test_table", *createModeInfo())
 	})
 
 	t.Run("mysql", func(t *testing.T) {
-		config := Config{
+		config := config.Config{
 			PackageName: "test_package",
 			Path:        "c:/tmp/",
 			TagName:     "xfield",
@@ -148,11 +151,11 @@ func TestXml(t *testing.T) {
 			Driver:      "mysql",
 			Keyword:     true,
 		}
-		genXml(config, "test_table", *createModeInfo())
+		generator.GenXml(config, "test_table", *createModeInfo())
 	})
 
 	t.Run("postgres", func(t *testing.T) {
-		config := Config{
+		config := config.Config{
 			PackageName: "test_package",
 			Path:        "c:/tmp/",
 			TagName:     "xfield",
@@ -160,11 +163,11 @@ func TestXml(t *testing.T) {
 			Driver:      "postgres",
 			Keyword:     true,
 		}
-		genXml(config, "test_table", *createModeInfo())
+		generator.GenXml(config, "test_table", *createModeInfo())
 	})
 
 	t.Run("sqlserver", func(t *testing.T) {
-		config := Config{
+		config := config.Config{
 			PackageName: "test_package",
 			Path:        "c:/tmp/",
 			TagName:     "xfield",
@@ -172,23 +175,23 @@ func TestXml(t *testing.T) {
 			Driver:      "mssql",
 			Keyword:     true,
 		}
-		genXml(config, "test_table", *createModeInfo())
+		generator.GenXml(config, "test_table", *createModeInfo())
 	})
 }
 
 func TestTemplate(t *testing.T) {
 	t.Run("no keyword", func(t *testing.T) {
-		config := Config{
+		config := config.Config{
 			PackageName: "test_package",
 			Path:        "c:/tmp/",
 			TagName:     "xfield",
 			MapperFile:  "template",
 		}
-		genTemplate(config, "test_table", *createModeInfo())
+		generator.GenTemplate(config, "test_table", *createModeInfo())
 	})
 
 	t.Run("mysql", func(t *testing.T) {
-		config := Config{
+		config := config.Config{
 			PackageName: "test_package",
 			Path:        "c:/tmp/",
 			TagName:     "xfield",
@@ -196,11 +199,11 @@ func TestTemplate(t *testing.T) {
 			Driver:      "mysql",
 			Keyword:     true,
 		}
-		genTemplate(config, "test_table", *createModeInfo())
+		generator.GenTemplate(config, "test_table", *createModeInfo())
 	})
 
 	t.Run("postgres", func(t *testing.T) {
-		config := Config{
+		config := config.Config{
 			PackageName: "test_package",
 			Path:        "c:/tmp/",
 			TagName:     "xfield",
@@ -208,11 +211,11 @@ func TestTemplate(t *testing.T) {
 			Driver:      "postgres",
 			Keyword:     true,
 		}
-		genTemplate(config, "test_table", *createModeInfo())
+		generator.GenTemplate(config, "test_table", *createModeInfo())
 	})
 
 	t.Run("sqlserver", func(t *testing.T) {
-		config := Config{
+		config := config.Config{
 			PackageName: "test_package",
 			Path:        "c:/tmp/",
 			TagName:     "xfield",
@@ -220,34 +223,34 @@ func TestTemplate(t *testing.T) {
 			Driver:      "mssql",
 			Keyword:     true,
 		}
-		genTemplate(config, "test_table", *createModeInfo())
+		generator.GenTemplate(config, "test_table", *createModeInfo())
 	})
 }
 
 func TestProxy(t *testing.T) {
-	config := Config{
+	config := config.Config{
 		PackageName: "test_package",
 		Path:        "c:/tmp/",
 		TagName:     "xfield",
 		MapperFile:  "xml",
 	}
 
-	genProxy(config, "test_table", *createModeInfo())
+	generator.GenProxy(config, "test_table", *createModeInfo())
 }
 
 func TestV2Proxy(t *testing.T) {
-	config := Config{
+	config := config.Config{
 		PackageName: "test_package",
 		Path:        "c:/tmp/",
 		TagName:     "xfield",
 		MapperFile:  "xml",
 	}
 
-	genV2Proxy(config, "test_table", *createModeInfo())
+	generator.GenV2Proxy(config, "test_table", *createModeInfo())
 }
 
 func TestAll1(t *testing.T) {
-	config := Config{
+	config := config.Config{
 		PackageName: "test_package",
 		Path:        "c:/tmp/",
 		TagName:     "xfield",
@@ -255,13 +258,13 @@ func TestAll1(t *testing.T) {
 		//ModelFile:   "model.go",
 	}
 	info := *createModeInfo()
-	genModel(config, "test_table", info)
-	genXml(config, "test_table", info)
-	genProxy(config, "test_table", info)
+	generator.GenModel(config, "test_table", info)
+	generator.GenXml(config, "test_table", info)
+	generator.GenProxy(config, "test_table", info)
 }
 
 func TestAll2(t *testing.T) {
-	config := Config{
+	config := config.Config{
 		PackageName: "test_package",
 		Path:        "c:/tmp/",
 		TagName:     "xfield",
@@ -269,13 +272,13 @@ func TestAll2(t *testing.T) {
 		//ModelFile:   "model.go",
 	}
 	info := *createModeInfo()
-	genModel(config, "test_table", info)
-	genXml(config, "test_table", info)
-	genProxy(config, "test_table", info)
+	generator.GenModel(config, "test_table", info)
+	generator.GenXml(config, "test_table", info)
+	generator.GenProxy(config, "test_table", info)
 }
 
 func TestAll3(t *testing.T) {
-	config := Config{
+	config := config.Config{
 		PackageName: "test_package",
 		Path:        "c:/tmp/",
 		TagName:     "xfield",
@@ -284,14 +287,14 @@ func TestAll3(t *testing.T) {
 		Plugin: "c:/tmp/webplugin.exe",
 	}
 	info := *createModeInfo()
-	genModel(config, "TEST_TABLE", info)
-	genXml(config, "TEST_TABLE", info)
-	genV2Proxy(config, "TEST_TABLE", info)
-	RunPlugin(config, "TEST_TABLE", info)
+	generator.GenModel(config, "TEST_TABLE", info)
+	generator.GenXml(config, "TEST_TABLE", info)
+	generator.GenV2Proxy(config, "TEST_TABLE", info)
+	plugin.RunPlugin(config, "TEST_TABLE", info)
 }
 
 func TestPlugin(t *testing.T) {
-	config := Config{
+	config := config.Config{
 		PackageName: "test_package",
 		Path:        "c:/tmp/",
 		TagName:     "xfield",
@@ -300,5 +303,5 @@ func TestPlugin(t *testing.T) {
 		//ModelFile:   "model.go",
 	}
 	info := *createModeInfo()
-	RunPlugin(config, "TEST_TABLE", info)
+	plugin.RunPlugin(config, "TEST_TABLE", info)
 }

@@ -6,12 +6,14 @@
  * Description: 
  */
 
-package main
+package generator
 
 import (
     "fmt"
-    "github.com/xfali/gobatis-cmd/common"
-    "github.com/xfali/gobatis-cmd/io"
+    "github.com/xfali/gobatis-cmd/internal/mapping"
+    "github.com/xfali/gobatis-cmd/pkg/common"
+    "github.com/xfali/gobatis-cmd/pkg/config"
+    "github.com/xfali/gobatis-cmd/pkg/io"
     "strings"
     "time"
 )
@@ -25,7 +27,7 @@ func findTime(model []common.ModelInfo) bool {
     return false
 }
 
-func genModel(config Config, tableName string, model []common.ModelInfo) {
+func GenModel(config config.Config, tableName string, model []common.ModelInfo) {
     modelDir := config.Path
     if !io.IsPathExists(modelDir) {
         io.Mkdir(modelDir)
@@ -82,7 +84,7 @@ func genModel(config Config, tableName string, model []common.ModelInfo) {
             builder.WriteString(common.ColumnSpace())
             builder.WriteString(common.Column2Modelfield(info.ColumnName))
             builder.WriteString(" ")
-            builder.WriteString(sqlType2GoMap[info.DataType])
+            builder.WriteString(mapping.SqlType2GoMap[info.DataType])
             builder.WriteString(" ")
             //builder.WriteString(fmt.Sprintf("`%s:\"%s\"`", config.TagName, info.ColumnName))
             writeTag(&builder, config.TagName, info.ColumnName)

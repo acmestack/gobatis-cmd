@@ -5,7 +5,7 @@
 使用命令安装：
 
 ```
-go get github.com/xfali/gobatis-cmd
+go get github.com/xfali/gobatis-cmd/cmd/gobatis-cmd
 ```
 
 ## 使用

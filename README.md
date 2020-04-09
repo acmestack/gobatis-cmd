@@ -9,10 +9,33 @@ go get github.com/xfali/gobatis-cmd/cmd/gobatis-cmd
 ```
 
 ## 使用
+
+```
+gobatis-cmd -f configs/gobatis-conf.json
+```
+```
+{
+  "driver": "mysql",
+  "path": ".",
+  "package": "test",
+  "namespace": "test",
+  "modelFile": "test_model.go",
+  "tagName": "xfield",
+  "mapperFile": "xml",
+  "plugin": "",
+  "keyword": false,
+  "tableName": "",
+  "dbName": "test_db",
+  "host": "localhost",
+  "port": 3306,
+  "user": "",
+  "password": ""
+}
+```
+或者使用命令参数：
 ```
 gobatis-cmd -driver=mysql -host=localhost -port=3306 -user=test -pw=test -db=testdb -pkg=test_package -mapper=xml -namespace=test -path=.
 ```
-
 ```
   -db string
         指定解析的数据库名称

@@ -11,6 +11,7 @@ package main
 import (
     "encoding/json"
     "flag"
+    "fmt"
     "github.com/xfali/gobatis-cmd/internal/pkg/db"
     "github.com/xfali/gobatis-cmd/internal/pkg/generator"
     "github.com/xfali/gobatis-cmd/pkg/config"
@@ -50,26 +51,27 @@ func main() {
     if *confFile != "" {
         err := loadFromFile(&conf, *confFile)
         if err != nil {
+            fmt.Println(err)
             os.Exit(1)
         }
+        conf.Path = formatPath(conf.Path)
+    } else {
+        conf.Driver = *driver
+        conf.Path = formatPath(*path)
+        conf.PackageName = *packageName
+        conf.Namespace = *namespace
+        conf.ModelFile = *modelfile
+        conf.TagName = *tagName
+        conf.MapperFile = *mapper
+        conf.Plugin = *plugin
+        conf.Keyword = *keyword
+        conf.TableName = *tableName
+        conf.DBName = *dbName
+        conf.Host = *host
+        conf.Port = *port
+        conf.User = *username
+        conf.Password = *pw
     }
-
-    root := formatPath(*path)
-    conf.Driver = *driver
-    conf.Path = root
-    conf.PackageName = *packageName
-    conf.Namespace = *namespace
-    conf.ModelFile = *modelfile
-    conf.TagName = *tagName
-    conf.MapperFile = *mapper
-    conf.Plugin = *plugin
-    conf.Keyword = *keyword
-    conf.TableName = *tableName
-    conf.DBName = *dbName
-    conf.Host = *host
-    conf.Port = *port
-    conf.User = *username
-    conf.Password = *pw
 
     err := dbDriver.Open(conf.Driver, db.GenDBInfo(conf.Driver, conf.DBName, conf.User, conf.Password, conf.Host, conf.Port))
     if err != nil {
@@ -98,6 +100,7 @@ func loadFromFile(conf *config.FileConfig, path string) error {
     if err != nil {
         return err
     }
+    fmt.Printf("config file: %s\n", string(b))
     return json.Unmarshal(b, conf)
 }
 

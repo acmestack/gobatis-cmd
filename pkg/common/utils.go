@@ -19,11 +19,11 @@ func ColumnSpace() string {
 }
 
 func TableName2ModelName(tableName string) string {
-    return Snake2camel(strings.ToLower(tableName))
+    return Snake2camel(tableName)
 }
 
 func Column2Modelfield(column string) string {
-    return Snake2camel(strings.ToLower(column))
+    return Snake2camel(column)
 }
 
 func Column2DynamicName(tableName, column string) string {

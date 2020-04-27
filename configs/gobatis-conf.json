@@ -8,6 +8,7 @@
   "mapperFile": "xml",
   "plugin": "",
   "keyword": false,
+  "register": false,
   "tableName": "",
   "dbName": "test_db",
   "host": "localhost",

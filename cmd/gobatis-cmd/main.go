@@ -39,6 +39,7 @@ func main() {
     keyword := flag.Bool("keyword", false, "with Keyword escape")
     namespace := flag.String("namespace", "", "namespace")
     confFile := flag.String("f", "", "config file")
+    register := flag.Bool("register", false, "add register code")
     flag.Parse()
 
     dbDriver := db.GetDriver(*driver)
@@ -65,6 +66,7 @@ func main() {
         conf.MapperFile = *mapper
         conf.Plugin = *plugin
         conf.Keyword = *keyword
+        conf.Register = *register
         conf.TableName = *tableName
         conf.DBName = *dbName
         conf.Host = *host

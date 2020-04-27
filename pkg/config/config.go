@@ -15,6 +15,7 @@ type Config struct {
     MapperFile  string `json:"mapperFile"`
     Plugin      string `json:"plugin"`
     Keyword     bool   `json:"keyword"`
+    Register    bool   `json:"register"`
 }
 
 type FileConfig struct {

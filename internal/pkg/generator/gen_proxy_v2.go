@@ -70,18 +70,20 @@ func GenV2Proxy(config config.Config, tableName string, models []common.ModelInf
         builder.WriteString("gobatis.RegisterModel(&modelV)")
         builder.WriteString(common.Newline())
 
-        if config.MapperFile == "xml" {
-            builder.WriteString(common.ColumnSpace())
-            builder.WriteString(fmt.Sprintf("gobatis.RegisterMapperFile(\"%sxml/%s_mapper.xml\")", config.Path, strings.ToLower(tableName)))
-            builder.WriteString(common.Newline())
-        } else if config.MapperFile == "go" {
-            builder.WriteString(common.ColumnSpace())
-            builder.WriteString(fmt.Sprintf("gobatis.RegisterMapperData([]byte(%sMapper))", modelName))
-            builder.WriteString(common.Newline())
-        } else if config.MapperFile == "template" {
-            builder.WriteString(common.ColumnSpace())
-            builder.WriteString(fmt.Sprintf("gobatis.RegisterTemplateFile(\"%stemplate/%s_mapper.tmpl\")", config.Path, strings.ToLower(tableName)))
-            builder.WriteString(common.Newline())
+        if config.Register {
+            if config.MapperFile == "xml" {
+                builder.WriteString(common.ColumnSpace())
+                builder.WriteString(fmt.Sprintf("gobatis.RegisterMapperFile(\"%sxml/%s_mapper.xml\")", config.Path, strings.ToLower(tableName)))
+                builder.WriteString(common.Newline())
+            } else if config.MapperFile == "go" {
+                builder.WriteString(common.ColumnSpace())
+                builder.WriteString(fmt.Sprintf("gobatis.RegisterMapperData([]byte(%sMapper))", modelName))
+                builder.WriteString(common.Newline())
+            } else if config.MapperFile == "template" {
+                builder.WriteString(common.ColumnSpace())
+                builder.WriteString(fmt.Sprintf("gobatis.RegisterTemplateFile(\"%stemplate/%s_mapper.tmpl\")", config.Path, strings.ToLower(tableName)))
+                builder.WriteString(common.Newline())
+            }
         }
 
         builder.WriteString("}")

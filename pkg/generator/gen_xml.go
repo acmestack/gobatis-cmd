@@ -9,13 +9,13 @@
 package generator
 
 import (
-    "fmt"
-    "github.com/xfali/gobatis-cmd/internal/mapping"
-    "github.com/xfali/gobatis-cmd/pkg/common"
-    "github.com/xfali/gobatis-cmd/pkg/config"
-    "github.com/xfali/gobatis-cmd/pkg/io"
-    "strings"
-    "time"
+	"fmt"
+	"github.com/xfali/gobatis-cmd/pkg/common"
+	"github.com/xfali/gobatis-cmd/pkg/config"
+	"github.com/xfali/gobatis-cmd/pkg/io"
+	"github.com/xfali/gobatis-cmd/pkg/mapping"
+	"strings"
+	"time"
 )
 
 func GenXml(config config.Config, tableName string, model []common.ModelInfo) {

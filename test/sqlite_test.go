@@ -6,13 +6,13 @@
 package test
 
 import (
-    "database/sql"
-    _ "github.com/mattn/go-sqlite3"
-    db2 "github.com/xfali/gobatis-cmd/internal/pkg/db"
-    "github.com/xfali/gobatis-cmd/internal/pkg/generator"
-    "github.com/xfali/gobatis-cmd/pkg/common"
-    "github.com/xfali/gobatis-cmd/pkg/config"
-    "testing"
+	"database/sql"
+	_ "github.com/mattn/go-sqlite3"
+	"github.com/xfali/gobatis-cmd/pkg/common"
+	"github.com/xfali/gobatis-cmd/pkg/config"
+	db2 "github.com/xfali/gobatis-cmd/pkg/db"
+	"github.com/xfali/gobatis-cmd/pkg/generator"
+	"testing"
 )
 
 func InitSqlite(t *testing.T) []common.ModelInfo {

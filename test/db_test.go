@@ -6,7 +6,7 @@
 package test
 
 import (
-	db2 "github.com/xfali/gobatis-cmd/internal/pkg/db"
+	db2 "github.com/xfali/gobatis-cmd/pkg/db"
 	"log"
 	"os"
 	"testing"

@@ -10,10 +10,10 @@ package generator
 
 import (
     "fmt"
-    "github.com/xfali/gobatis-cmd/internal/mapping"
     "github.com/xfali/gobatis-cmd/pkg/common"
     "github.com/xfali/gobatis-cmd/pkg/config"
     "github.com/xfali/gobatis-cmd/pkg/io"
+    "github.com/xfali/gobatis-cmd/pkg/mapping"
     "strings"
     "time"
 )

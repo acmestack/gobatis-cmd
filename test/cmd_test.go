@@ -9,9 +9,9 @@
 package test
 
 import (
-	"github.com/xfali/gobatis-cmd/internal/pkg/generator"
 	"github.com/xfali/gobatis-cmd/pkg/common"
 	"github.com/xfali/gobatis-cmd/pkg/config"
+	"github.com/xfali/gobatis-cmd/pkg/generator"
 	"github.com/xfali/gobatis-cmd/pkg/plugin"
 	"testing"
 )

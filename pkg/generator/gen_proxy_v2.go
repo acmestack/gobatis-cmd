@@ -13,6 +13,7 @@ import (
     "github.com/xfali/gobatis-cmd/pkg/common"
     "github.com/xfali/gobatis-cmd/pkg/config"
     "github.com/xfali/gobatis-cmd/pkg/io"
+    "path/filepath"
     "strings"
     "time"
 )
@@ -22,7 +23,7 @@ func GenV2Proxy(config config.Config, tableName string, models []common.ModelInf
     if !io.IsPathExists(mapperDir) {
         io.Mkdir(mapperDir)
     }
-    mapperFile, err := io.OpenAppend(mapperDir + strings.ToLower(tableName) + "_proxy.go")
+    mapperFile, err := io.OpenAppend(filepath.Join(mapperDir, strings.ToLower(tableName) + "_proxy.go"))
     if err == nil {
         defer mapperFile.Close()
 

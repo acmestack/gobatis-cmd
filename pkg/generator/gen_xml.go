@@ -14,7 +14,8 @@ import (
 	"github.com/xfali/gobatis-cmd/pkg/config"
 	"github.com/xfali/gobatis-cmd/pkg/io"
 	"github.com/xfali/gobatis-cmd/pkg/mapping"
-	"strings"
+    "path/filepath"
+    "strings"
 	"time"
 )
 
@@ -23,11 +24,11 @@ func GenXml(config config.Config, tableName string, model []common.ModelInfo) {
         common.SelectKeywordFormatter(config.Driver)
     }
     if config.MapperFile == "xml" {
-        xmlDir := config.Path + "xml/"
+        xmlDir := filepath.Join(config.Path, "xml/")
         if !io.IsPathExists(xmlDir) {
             io.Mkdir(xmlDir)
         }
-        xmlFile, err := io.OpenAppend(xmlDir + strings.ToLower(tableName) + "_mapper.xml")
+        xmlFile, err := io.OpenAppend(filepath.Join(xmlDir, strings.ToLower(tableName) + "_mapper.xml"))
         if err == nil {
             defer xmlFile.Close()
 
@@ -41,7 +42,7 @@ func GenXml(config config.Config, tableName string, model []common.ModelInfo) {
         if !io.IsPathExists(xmlDir) {
             io.Mkdir(xmlDir)
         }
-        xmlFile, err := io.OpenAppend(xmlDir + strings.ToLower(tableName) + "_mapper.go")
+        xmlFile, err := io.OpenAppend(filepath.Join(xmlDir, strings.ToLower(tableName) + "_mapper.go"))
         if err == nil {
             defer xmlFile.Close()
 

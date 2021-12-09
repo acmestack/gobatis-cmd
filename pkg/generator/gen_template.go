@@ -14,6 +14,7 @@ import (
 	"github.com/xfali/gobatis-cmd/pkg/config"
 	"github.com/xfali/gobatis-cmd/pkg/io"
 	"github.com/xfali/gobatis-cmd/pkg/mapping"
+	"path/filepath"
 	"strings"
 	"time"
 )
@@ -22,11 +23,11 @@ func GenTemplate(config config.Config, tableName string, model []common.ModelInf
 	if config.Keyword {
 		common.SelectKeywordFormatter(config.Driver)
 	}
-	targetDir := config.Path + "template/"
+	targetDir := filepath.Join(config.Path, "template/")
 	if !io.IsPathExists(targetDir) {
 		io.Mkdir(targetDir)
 	}
-	targetFile, err := io.OpenAppend(targetDir + strings.ToLower(tableName) + "_mapper.tmpl")
+	targetFile, err := io.OpenAppend(filepath.Join(targetDir, strings.ToLower(tableName)+"_mapper.tmpl"))
 	if err == nil {
 		defer targetFile.Close()
 
@@ -70,19 +71,19 @@ func buildTmplMapper(builder *strings.Builder, config config.Config, tableName s
 	builder.WriteString(common.Newline())
 	builder.WriteString(common.Newline())
 
-    //select count
-    builder.WriteString(fmt.Sprintf(`{{define "select%sCount"}}`, modelName))
-    builder.WriteString(common.Newline())
+	//select count
+	builder.WriteString(fmt.Sprintf(`{{define "select%sCount"}}`, modelName))
+	builder.WriteString(common.Newline())
 
-    builder.WriteString(fmt.Sprintf(`SELECT COUNT(*) FROM %s`, tableName))
-    builder.WriteString(common.Newline())
+	builder.WriteString(fmt.Sprintf(`SELECT COUNT(*) FROM %s`, tableName))
+	builder.WriteString(common.Newline())
 
-    builder.WriteString(genTmplWhere(modelName, model))
-    builder.WriteString(common.Newline())
+	builder.WriteString(genTmplWhere(modelName, model))
+	builder.WriteString(common.Newline())
 
-    builder.WriteString(`{{end}}`)
-    builder.WriteString(common.Newline())
-    builder.WriteString(common.Newline())
+	builder.WriteString(`{{end}}`)
+	builder.WriteString(common.Newline())
+	builder.WriteString(common.Newline())
 
 	//insert
 	builder.WriteString(fmt.Sprintf(`{{define "insert%s"}}`, modelName))

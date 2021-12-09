@@ -14,6 +14,7 @@ import (
     "github.com/xfali/gobatis-cmd/pkg/config"
     "github.com/xfali/gobatis-cmd/pkg/io"
     "github.com/xfali/gobatis-cmd/pkg/mapping"
+    "path/filepath"
     "strings"
     "time"
 )
@@ -36,8 +37,9 @@ func GenModel(config config.Config, tableName string, model []common.ModelInfo) 
     if fileName == "" {
         fileName = strings.ToLower(tableName) + ".go"
     }
-    exist := io.IsPathExists(modelDir + fileName)
-    modelFile, err := io.OpenAppend(modelDir + fileName)
+    dst := filepath.Join(modelDir, fileName)
+    exist := io.IsPathExists(dst)
+    modelFile, err := io.OpenAppend(dst)
     if err == nil {
         defer modelFile.Close()
 

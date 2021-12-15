@@ -29,7 +29,7 @@ type PostgresDB struct {
 var buildinDrivers = map[string]common.DBDriver{
 	"mysql":    &MysqlDB{},
 	"postgres": &PostgresDB{},
-	"sqlite":   &SqliteDB{},
+	"sqlite3":  &SqliteDB{},
 }
 
 func GetDriver(name string) common.DBDriver {

@@ -42,12 +42,6 @@ func main() {
     register := flag.Bool("register", false, "add register code")
     flag.Parse()
 
-    dbDriver := db.GetDriver(*driver)
-    if dbDriver == nil {
-        log.Print("not support driver: ", *driver)
-        os.Exit(-1)
-    }
-
     conf := config.FileConfig{}
     if *confFile != "" {
         err := loadFromFile(&conf, *confFile)
@@ -73,6 +67,12 @@ func main() {
         conf.Port = *port
         conf.User = *username
         conf.Password = *pw
+    }
+
+    dbDriver := db.GetDriver(conf.Driver)
+    if dbDriver == nil {
+        log.Print("not support driver: ", conf.Driver)
+        os.Exit(-1)
     }
 
     err := dbDriver.Open(conf.Driver, db.GenDBInfo(conf.Driver, conf.DBName, conf.User, conf.Password, conf.Host, conf.Port))

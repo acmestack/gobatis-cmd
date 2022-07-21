@@ -1,5 +1,13 @@
 # gobatis-cmd
 
+
+[![license card](https://img.shields.io/badge/License-Apache%202.0-brightgreen.svg?label=license)](https://github.com/acmestack/gobatis-cmd/blob/main/LICENSE)
+[![go version](https://img.shields.io/github/go-mod/go-version/acmestack/gobatis-cmd)](#)
+[![go report](https://goreportcard.com/badge/github.com/acmestack/gobatis-cmd)](https://goreportcard.com/report/github.com/acmestack/gobatis-cmd)
+[![codecov report](https://codecov.io/gh/acmestack/gobatis-cmd/branch/main/graph/badge.svg)](https://codecov.io/gh/acmestack/gobatis-cmd)
+[![workflow](https://github.com/acmestack/gobatis-cmd/actions/workflows/go.yml/badge.svg?event=push)](#)
+[![lasted release](https://img.shields.io/github/v/release/acmestack/gobatis-cmd?label=lasted)](https://github.com/acmestack/gobatis-cmd/releases)
+
 ## 安装
 
 使用命令安装：

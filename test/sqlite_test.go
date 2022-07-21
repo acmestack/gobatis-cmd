@@ -88,7 +88,7 @@ func TestSqliteGenAll(t *testing.T) {
 	config := config.Config{
 		PackageName: "mapper",
 		Path:        "c:/tmp/",
-		TagName:     "xfield",
+		TagName:     "column",
 		MapperFile:  "xml",
 		//ModelFile:   "model.go",
 	}

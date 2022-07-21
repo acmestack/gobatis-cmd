@@ -88,7 +88,7 @@ func GenModel(config config.Config, tableName string, model []common.ModelInfo) 
 		builder.WriteString(common.Newline())
 
 		builder.WriteString(common.ColumnSpace())
-		builder.WriteString(fmt.Sprintf("//TableName gobatis.ModelName `%s`", tableName))
+		builder.WriteString(fmt.Sprintf("//TableName gobatis.TableName `%s`", tableName))
 		builder.WriteString(common.Newline())
 
 		for _, info := range model {
@@ -160,7 +160,7 @@ func GenModel(config config.Config, tableName string, model []common.ModelInfo) 
 }
 
 const (
-	defaultTag = "xfield"
+	defaultTag = "column"
 )
 
 func writeTag(b *strings.Builder, tagName, columnName string) string {

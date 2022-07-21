@@ -42,7 +42,7 @@ func main() {
 	pw := flag.String("pw", "", "password of db")
 	path := flag.String("path", "", "root path to save files")
 	modelfile := flag.String("model", "", "the name of model file")
-	tagName := flag.String("tag", "xfield", "the name of field tag,eg: xfield,json  xfield,json,yaml")
+	tagName := flag.String("tag", "column", "the name of field tag,eg: column,json  column,json,yaml")
 	mapper := flag.String("mapper", "xml", "generate mapper file: xml | template | go")
 	plugin := flag.String("plugin", "", "path of plugin")
 	keyword := flag.Bool("keyword", false, "with Keyword escape")

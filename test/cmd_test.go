@@ -83,7 +83,7 @@ func TestMode(t *testing.T) {
 		config := config.Config{
 			PackageName: "test_package",
 			Path:        "c:/tmp/",
-			TagName:     "xfield",
+			TagName:     "column",
 			MapperFile:  "xml",
 			ModelFile:   "model.go",
 		}
@@ -95,7 +95,7 @@ func TestMode(t *testing.T) {
 		config := config.Config{
 			PackageName: "test_package",
 			Path:        "c:/tmp/",
-			TagName:     "xfield,json",
+			TagName:     "column,json",
 			MapperFile:  "xml",
 			ModelFile:   "model.go",
 		}
@@ -107,7 +107,7 @@ func TestMode(t *testing.T) {
 		config := config.Config{
 			PackageName: "test_package",
 			Path:        "c:/tmp/",
-			TagName:     "xfield,json,",
+			TagName:     "column,json,",
 			MapperFile:  "xml",
 			ModelFile:   "model.go",
 		}
@@ -131,7 +131,7 @@ func TestMode(t *testing.T) {
 		config := config.Config{
 			PackageName: "test_package",
 			Path:        "c:/tmp/",
-			TagName:     "xfield,json,xml",
+			TagName:     "column,json,xml",
 			MapperFile:  "xml",
 			ModelFile:   "model.go",
 		}
@@ -145,7 +145,7 @@ func TestXml(t *testing.T) {
 		config := config.Config{
 			PackageName: "test_package",
 			Path:        "c:/tmp/",
-			TagName:     "xfield",
+			TagName:     "column",
 			MapperFile:  "xml",
 		}
 		generator.GenXml(config, "test_table", *createModeInfo())
@@ -155,7 +155,7 @@ func TestXml(t *testing.T) {
 		config := config.Config{
 			PackageName: "test_package",
 			Path:        "c:/tmp/",
-			TagName:     "xfield",
+			TagName:     "column",
 			MapperFile:  "xml",
 			Driver:      "mysql",
 			Keyword:     true,
@@ -167,7 +167,7 @@ func TestXml(t *testing.T) {
 		config := config.Config{
 			PackageName: "test_package",
 			Path:        "c:/tmp/",
-			TagName:     "xfield",
+			TagName:     "column",
 			MapperFile:  "xml",
 			Driver:      "postgres",
 			Keyword:     true,
@@ -179,7 +179,7 @@ func TestXml(t *testing.T) {
 		config := config.Config{
 			PackageName: "test_package",
 			Path:        "c:/tmp/",
-			TagName:     "xfield",
+			TagName:     "column",
 			MapperFile:  "xml",
 			Driver:      "mssql",
 			Keyword:     true,
@@ -193,7 +193,7 @@ func TestTemplate(t *testing.T) {
 		config := config.Config{
 			PackageName: "test_package",
 			Path:        "c:/tmp/",
-			TagName:     "xfield",
+			TagName:     "column",
 			MapperFile:  "template",
 		}
 		generator.GenTemplate(config, "test_table", *createModeInfo())
@@ -203,7 +203,7 @@ func TestTemplate(t *testing.T) {
 		config := config.Config{
 			PackageName: "test_package",
 			Path:        "c:/tmp/",
-			TagName:     "xfield",
+			TagName:     "column",
 			MapperFile:  "template",
 			Driver:      "mysql",
 			Keyword:     true,
@@ -215,7 +215,7 @@ func TestTemplate(t *testing.T) {
 		config := config.Config{
 			PackageName: "test_package",
 			Path:        "c:/tmp/",
-			TagName:     "xfield",
+			TagName:     "column",
 			MapperFile:  "template",
 			Driver:      "postgres",
 			Keyword:     true,
@@ -227,7 +227,7 @@ func TestTemplate(t *testing.T) {
 		config := config.Config{
 			PackageName: "test_package",
 			Path:        "c:/tmp/",
-			TagName:     "xfield",
+			TagName:     "column",
 			MapperFile:  "template",
 			Driver:      "mssql",
 			Keyword:     true,
@@ -240,7 +240,7 @@ func TestProxy(t *testing.T) {
 	config := config.Config{
 		PackageName: "test_package",
 		Path:        "c:/tmp/",
-		TagName:     "xfield",
+		TagName:     "column",
 		MapperFile:  "xml",
 	}
 
@@ -251,7 +251,7 @@ func TestV2Proxy(t *testing.T) {
 	config := config.Config{
 		PackageName: "test_package",
 		Path:        "c:/tmp/",
-		TagName:     "xfield",
+		TagName:     "column",
 		MapperFile:  "xml",
 	}
 
@@ -262,7 +262,7 @@ func TestAll1(t *testing.T) {
 	config := config.Config{
 		PackageName: "test_package",
 		Path:        "c:/tmp/",
-		TagName:     "xfield",
+		TagName:     "column",
 		MapperFile:  "xml",
 		//ModelFile:   "model.go",
 	}
@@ -276,7 +276,7 @@ func TestAll2(t *testing.T) {
 	config := config.Config{
 		PackageName: "test_package",
 		Path:        "c:/tmp/",
-		TagName:     "xfield",
+		TagName:     "column",
 		MapperFile:  "go",
 		//ModelFile:   "model.go",
 	}
@@ -290,7 +290,7 @@ func TestAll3(t *testing.T) {
 	config := config.Config{
 		PackageName: "test_package",
 		Path:        "c:/tmp/",
-		TagName:     "xfield",
+		TagName:     "column",
 		MapperFile:  "xml",
 		//ModelFile:   "model.go",
 		Plugin: "c:/tmp/webplugin.exe",
@@ -306,7 +306,7 @@ func TestPlugin(t *testing.T) {
 	config := config.Config{
 		PackageName: "test_package",
 		Path:        "c:/tmp/",
-		TagName:     "xfield",
+		TagName:     "column",
 		MapperFile:  "xml",
 		Plugin:      "c:/tmp/webplugin.exe",
 		//ModelFile:   "model.go",

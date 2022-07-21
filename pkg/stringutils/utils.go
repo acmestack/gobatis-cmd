@@ -1,9 +1,18 @@
-/**
- * Copyright (C) 2019, Xiongfa Li.
- * All right reserved.
- * @author xiongfa.li
- * @version V1.0
- * Description:
+/*
+ * Copyright (c) 2022, AcmeStack
+ * All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package stringutils
@@ -35,15 +44,15 @@ func Camel2snake(s string) string {
 func Snake2camel(s string) string {
 	s = strings.Trim(s, "_")
 	if strings.Index(s, "_") != -1 {
-	   return Snake2camel3(s)
+		return Snake2camel3(s)
 	} else {
-	   d := []byte(s)
-	   if len(d) > 0 {
-	       if d[0] >= 'a' && d[0] <= 'z' {
-	           d[0] -= 32
-	           return string(d)
-	       }
-	   }
+		d := []byte(s)
+		if len(d) > 0 {
+			if d[0] >= 'a' && d[0] <= 'z' {
+				d[0] -= 32
+				return string(d)
+			}
+		}
 	}
 	return s
 }
@@ -73,32 +82,32 @@ func Snake2camel2(s string) string {
 }
 
 func Snake2camel3(s string) string {
-    strs := strings.Split(s, "_")
-    buf := bytes.Buffer{}
-    buf.Grow(len(s))
-    for _, v := range strs {
-        if v == "" {
-            continue
-        }
-        // 第一个字符必须大写
-        d := v[0]
-        if d >= 'a' && d <= 'z' {
-            d -= 32
-        }
-        buf.WriteByte(d)
-        low := false
-        for i := 1; i < len(v); i++ {
-            d := v[i]
-            // 中间夹杂小写
-            if d >= 'a' && d <= 'z' {
-                low = true
-            } else if d >= 'A' && d <= 'Z' && !low {
-                // 大写且中间没有经过小写，则表明是连续大写，则改写为小写
-                buf.WriteByte(d + 32)
-                continue
-            }
-            buf.WriteByte(d)
-        }
-    }
-    return buf.String()
+	strs := strings.Split(s, "_")
+	buf := bytes.Buffer{}
+	buf.Grow(len(s))
+	for _, v := range strs {
+		if v == "" {
+			continue
+		}
+		// 第一个字符必须大写
+		d := v[0]
+		if d >= 'a' && d <= 'z' {
+			d -= 32
+		}
+		buf.WriteByte(d)
+		low := false
+		for i := 1; i < len(v); i++ {
+			d := v[i]
+			// 中间夹杂小写
+			if d >= 'a' && d <= 'z' {
+				low = true
+			} else if d >= 'A' && d <= 'Z' && !low {
+				// 大写且中间没有经过小写，则表明是连续大写，则改写为小写
+				buf.WriteByte(d + 32)
+				continue
+			}
+			buf.WriteByte(d)
+		}
+	}
+	return buf.String()
 }

@@ -1,6 +1,6 @@
-module github.com/xfali/gobatis-cmd
+module github.com/acmestack/gobatis-cmd
 
-go 1.11
+go 1.18
 
 require (
 	github.com/go-sql-driver/mysql v1.5.0

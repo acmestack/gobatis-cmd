@@ -108,7 +108,17 @@ func (mc *mysqlConn) writePacket(data []byte) error {
 		if mc.rawConn != nil {
 			conn = mc.rawConn
 		}
-		if err := connCheck(conn); err != nil {
+		var err error
+		// If this connection has a ReadTimeout which we've been setting on
+		// reads, reset it to its default value before we attempt a non-blocking
+		// read, otherwise the scheduler will just time us out before we can read
+		if mc.cfg.ReadTimeout != 0 {
+			err = conn.SetReadDeadline(time.Time{})
+		}
+		if err == nil && mc.cfg.CheckConnLiveness {
+			err = connCheck(conn)
+		}
+		if err != nil {
 			errLog.Print("closing bad idle connection: ", err)
 			mc.Close()
 			return driver.ErrBadConn
@@ -998,6 +1008,22 @@ func (stmt *mysqlStmt) writeExecutePacket(args []driver.Value) error {
 			case int64:
 				paramTypes[i+i] = byte(fieldTypeLongLong)
 				paramTypes[i+i+1] = 0x00
+
+				if cap(paramValues)-len(paramValues)-8 >= 0 {
+					paramValues = paramValues[:len(paramValues)+8]
+					binary.LittleEndian.PutUint64(
+						paramValues[len(paramValues)-8:],
+						uint64(v),
+					)
+				} else {
+					paramValues = append(paramValues,
+						uint64ToBytes(uint64(v))...,
+					)
+				}
+
+			case uint64:
+				paramTypes[i+i] = byte(fieldTypeLongLong)
+				paramTypes[i+i+1] = 0x80 // type is unsigned
 
 				if cap(paramValues)-len(paramValues)-8 >= 0 {
 					paramValues = paramValues[:len(paramValues)+8]

@@ -1,3 +1,0 @@
-# `/gobatis-cmd`
-
-

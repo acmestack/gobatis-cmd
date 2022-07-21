@@ -5,7 +5,7 @@
 使用命令安装：
 
 ```
-go get github.com/xfali/gobatis-cmd/cmd/gobatis-cmd
+go get github.com/acmestack/gobatis-cmd/cmd/gobatis-cmd
 ```
 
 ## 使用
@@ -48,7 +48,7 @@ gobatis-cmd -driver=mysql -host=localhost -port=3306 -user=test -pw=test -db=tes
   -path string
         保存生成文件的路径
   -pkg string
-        生成文件的包名 (default "xfali/gobatis/default")
+        生成文件的包名 (default "acmestack/gobatis/default")
   -port int
         数据库的端口号  (default 3306)
   -pw string
@@ -82,7 +82,7 @@ gobatis-cmd -driver=mysql -host=localhost -port=3306 -user=test -pw=test -db=tes
 package test
 
 import (
-	"github.com/xfali/gobatis"
+	"github.com/acmestack/gobatis"
 	"time"
 )
 
@@ -204,7 +204,7 @@ func (m *TestTable) Delete(sess *gobatis.Session) (int64, error) {
 package test
 
 import (
-    "github.com/xfali/gobatis"
+    "github.com/acmestack/gobatis"
 )
 
 func init() {
@@ -326,7 +326,7 @@ fmt.Println(ret)
 ```
 事务:
 
-使用gobatis的session.Tx() 参考[gobatis](https://github.com/xfali/gobatis)
+使用gobatis的session.Tx() 参考[gobatis](https://github.com/acmestack/gobatis)
 
 ## 其他
 

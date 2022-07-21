@@ -4,7 +4,7 @@
   "package": "test",
   "namespace": "test",
   "modelFile": "test_model.go",
-  "tagName": "xfield",
+  "tagName": "column",
   "mapperFile": "xml",
   "plugin": "",
   "keyword": false,

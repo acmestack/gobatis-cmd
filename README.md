@@ -5,7 +5,7 @@
 使用命令安装：
 
 ```
-go get github.com/xfali/gobatis-cmd/cmd/gobatis-cmd
+go get github.com/acmestack/gobatis-cmd/cmd/gobatis-cmd
 ```
 
 ## 使用
@@ -20,7 +20,7 @@ gobatis-cmd -f configs/gobatis-conf.json
   "package": "test",
   "namespace": "test",
   "modelFile": "test_model.go",
-  "tagName": "xfield",
+  "tagName": "column",
   "mapperFile": "xml",
   "plugin": "",
   "keyword": false,
@@ -48,7 +48,7 @@ gobatis-cmd -driver=mysql -host=localhost -port=3306 -user=test -pw=test -db=tes
   -path string
         保存生成文件的路径
   -pkg string
-        生成文件的包名 (default "xfali/gobatis/default")
+        生成文件的包名 (default "acmestack/gobatis/default")
   -port int
         数据库的端口号  (default 3306)
   -pw string
@@ -56,7 +56,7 @@ gobatis-cmd -driver=mysql -host=localhost -port=3306 -user=test -pw=test -db=tes
   -table string
         指定生成的table名称
   -tag string
-        生成Model的tag名称,多tag用逗号分隔，如"json,xml" (default "xfield")
+        生成Model的tag名称,多tag用逗号分隔，如"json,xml" (default "column")
   -user string
         数据库的用户名
   -mapper string
@@ -82,16 +82,16 @@ gobatis-cmd -driver=mysql -host=localhost -port=3306 -user=test -pw=test -db=tes
 package test
 
 import (
-	"github.com/xfali/gobatis"
+	"github.com/acmestack/gobatis"
 	"time"
 )
 
 type TestTable struct {
-	//TableName gobatis.ModelName `test_table`
-	Id         int       `xfield:"id"`
-	Username   string    `xfield:"username"`
-	Password   string    `xfield:"password"`
-	Createtime time.Time `xfield:"createtime"`
+	//TableName gobatis.TableName `test_table`
+	Id         int       `column:"id"`
+	Username   string    `column:"username"`
+	Password   string    `column:"password"`
+	Createtime time.Time `column:"createtime"`
 }
 
 func (m *TestTable) Select(sess *gobatis.Session) ([]TestTable, error) {
@@ -204,7 +204,7 @@ func (m *TestTable) Delete(sess *gobatis.Session) (int64, error) {
 package test
 
 import (
-    "github.com/xfali/gobatis"
+    "github.com/acmestack/gobatis"
 )
 
 func init() {
@@ -326,7 +326,7 @@ fmt.Println(ret)
 ```
 事务:
 
-使用gobatis的session.Tx() 参考[gobatis](https://github.com/xfali/gobatis)
+使用gobatis的session.Tx() 参考[gobatis](https://github.com/acmestack/gobatis)
 
 ## 其他
 
